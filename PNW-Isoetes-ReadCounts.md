@@ -10,7 +10,7 @@
 | Isoetes_maritima_Taylor6983-1_1 | 522 | 322 | 38.3 | 2 | 3 |
 | Isoetes_maritima_Taylor6983-1_2 | 417 | 269 | 35.5 | 2 | 5 |
 | Isoetes_maritima_Taylor6987-1 | 288 | 200 | 30.6 | 1 | 2 |
-| Isoetes_occidentalis_G1 | 204 | 122 | 40.2 | 3 | 3 |
+| Isoetes_occidentalis_G1 | 204 | 122 | 40.2 | 1 | 3 |
 | Isoetes_occidentalis_G10 | 398 | 235 | 41.0 | 2 | 4 |
 | Isoetes_occidentalis_G5 | 420 | 238 | 43.3 | 1 | 2 |
 | Isoetes_occidentalis_G7 | 926 | 581 | 37.3 | 2 | 4 |
