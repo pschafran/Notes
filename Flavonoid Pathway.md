@@ -47,7 +47,7 @@ Very conserved across plant lineages, all hornwort hits in single orthogroup (OG
 ## C4H
 Hits in ~260 orthogroups containing >7000 sequences!!! Most with low sequence similarity to references from Kevin. 
 
-<img src="/pschafran/Notes/C4H_percSimilarityDist.png">
+<img src="/images/C4H_percSimilarityDist.png">
 
 
 
