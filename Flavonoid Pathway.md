@@ -83,6 +83,19 @@ Aligning refs to each OG, OG0009039 seems to be best match with 67% pairwise sim
 <img src="/images/4CL_OG0009039_alignment.png">
 <img src="/images/4CL_OG0009039_tree.png">
 
+---------------------------
+
+## CHS
+
+
+---------------------------
+
+## CHI
+Combination of BLAST and HMM hits yields 75 sequences from 7 orthogroups. Phylogeny including Kevin's references shows  hornwort sequences nested with FAPa1, FAPa2, FAPb, and CHIL, but not CHI.
+
+
+<img src="/images/CHI_alignment.png">
+<img src="/images/CHI_tree.png">
 
 
 ```python
