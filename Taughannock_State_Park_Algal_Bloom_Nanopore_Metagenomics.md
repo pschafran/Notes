@@ -279,7 +279,7 @@ barrnap -outseq rRNA.fa --kingdom bac ../assembly.racon-iter5.medaka-consensus.f
 barrnap identified 80 rRNA segments  
 Annotated with Centrifuge and compared to whole-data results:  
 
-<img src="/peter/images/rRNA_DNA_shared_genus_annotations.png">
+<img src="/images/rRNA_DNA_shared_genus_annotations.png">
 
 ### 6. Read sub-setting tests (mimic Flongle output)
 
