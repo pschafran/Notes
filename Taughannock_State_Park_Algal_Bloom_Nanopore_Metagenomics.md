@@ -91,7 +91,7 @@ medaka_consensus -i ../taughannock_HAB_all_porechop.fastq -d assembly.racon-iter
 mkdir annotations ; mkdir annotation/blastn ; mkdir annotation/centrifuge ; mkdir annotation/kaiju ; mkdir annotation/kraken2
 
 ### Commands
-blastn -query assembly.racon-iter5.medaka-consensus.fasta -db ~/blastdbs/nt/nt -out blastn.results -outfmt "6 qseqid staxids bitscore" -num_threads 12
+blastn -query assembly.racon-iter5.medaka-consensus.fasta -db ~/blastdbs/nt/nt -out blastn.results -outfmt "6 qseqid staxids bitscore" -num_threads 12 -evalue 1e-10
 
 centrifuge -x ~/centrifugeDBs/nt/nt -k -p 12 -f assembly.racon-iter5.medaka-consensus.fasta -S centrifuge.results --report-file centrifuge.report
 
@@ -279,7 +279,7 @@ barrnap -outseq rRNA.fa --kingdom bac ../assembly.racon-iter5.medaka-consensus.f
 barrnap identified 80 rRNA segments  
 Annotated with Centrifuge and compared to whole-data results:  
 
-<img src="/peter/images/rRNA_DNA_shared_genus_annotations.png">
+<img src="/images/rRNA_DNA_shared_genus_annotations.png">
 
 ### 6. Read sub-setting tests (mimic Flongle output)
 
@@ -351,6 +351,15 @@ for i in {1..10} ; do flye --nano-raw taughannock_HAB_subset"$i".fastq -g 50m -t
 | taughannock_HAB_subset7_flye-meta/assembly.fasta | 17944380 | 887 | 20230.42 | 650153 | 114 | 300 | 3 | 69465 | 64 | 40576 | 134 | 11080 | 281 |
 | taughannock_HAB_subset8_flye-meta/assembly.fasta | 18374279 | 803 | 22882.04 | 1659072 | 506 | 100 | 1 | 74559 | 53 | 42348 | 118 | 15446 | 251 |
 | taughannock_HAB_subset9_flye-meta/assembly.fasta | 18207798 | 871 | 20904.48 | 1709113 | 505 | 0 | 0 | 60489 | 68 | 38461 | 144 | 13143 | 287 |
+
+
+#### Subset comparisons
+Total assembly vs. subsets annotated by BLASTn. Violin plots are range of subset results, red dots represent assembly of all data. 
+
+<img src="/images/superkingdom_blastn_subsets.png">
+<img src="/images/phylum_blastn_subsets.png">
+<img src="/images/order_blastn_subsets.png">
+
 
 
 ### 7. Map classifications to isolated subassemblies in assembly graph
@@ -445,7 +454,7 @@ with open("assembly_subgenome1_contiglist.txt", "r") as contigFile:
     for line in contigFile:
         contigList.append(line.strip("\n"))
         
-with open("classifier_genus.table", "r") as classifierFile, open("assembly_subgenome1_classifier_genus.tsv", "w") as outfile:
+with open("classifier_family.table", "r") as classifierFile, open("assembly_subgenome1_classifier_family.tsv", "w") as outfile:
     linecount = 0
     for line in classifierFile:
         linecount += 1
