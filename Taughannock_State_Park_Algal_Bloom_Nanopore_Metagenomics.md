@@ -354,11 +354,13 @@ for i in {1..10} ; do flye --nano-raw taughannock_HAB_subset"$i".fastq -g 50m -t
 
 
 #### Subset comparisons
-Total assembly vs. subsets annotated by BLASTn. Violin plots are range of subset results, red dots represent assembly of all data. 
+Total assembly vs. subsets annotated by BLASTn. Violin plots are distribution of subset results, red dots represent assembly of all data. For phylum and order, only taxa representing > 1% of contigs are shown.
 
 <img src="/images/superkingdom_blastn_subsets.png">
 <img src="/images/phylum_blastn_subsets.png">
 <img src="/images/order_blastn_subsets.png">
+<img src="/images/family_blastn_subsets.png">
+<img src="/images/genus_blastn_subsets.png">
 
 
 
