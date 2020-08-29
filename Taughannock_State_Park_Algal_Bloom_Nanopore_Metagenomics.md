@@ -468,10 +468,6 @@ with open("classifier_family.table", "r") as classifierFile, open("assembly_subg
             outfile.write(line)
 ```
 
-** Subsetting reads doesn't 
-
-### 8. Subset reads to refine single genome assemblies
-
 Using Victor's list of contigs, extract sequences from assembly.
 ```
 getScaffoldsFromFasta.py assembly.racon-iter5.fasta assembly_subgenome1_contiglist.txt
@@ -487,7 +483,9 @@ picard SamToFastq I=assembly_subgenome1_contiglist.txt.fasta.sam.mapped.sam.sort
 flye --nano-raw assembly_subgenome1_contiglist.txt.fasta.sam.mapped.sam.sorted.sam.fastq --threads 12 --out-dir assembly_subgenome1_flye --genome-size 10m 
 ```
 
-### 9. Gene prediction and functional annotation
+** This doesn't help either!!!**
+
+### 8. Gene prediction and functional annotation
 
 Run MetaGeneMark on medaka polishing contigs here http://exon.gatech.edu/meta_gmhmmp.cgi. Also run on all subsets.
 
@@ -563,14 +561,6 @@ with open("cog_table.tsv", "w") as outfile:
 
 ```
 
-
-      File "<ipython-input-1-43c11607d6b3>", line 17
-        dict[geneName][]
-                       ^
-    SyntaxError: invalid syntax
-
-
-
 <img src="/images/COG_histogram.png">
           
 <img src="/images/COG_presenceTable.png">
@@ -580,7 +570,7 @@ with open("cog_table.tsv", "w") as outfile:
 
 ---------------------------------------          
 
-### 10. 16S and 23S phylogenies
+### 9. 16S and 23S phylogenies
 
 Download references from SILVA
 ```
@@ -663,6 +653,10 @@ for key in renameTable:
 with open("rRNA-23S_samples_and_refs.MAFFT.fasta.contree.renamed", "w") as outfile:
     outfile.write("%s\n" % line)
 ```
+
+**Green = Eukaryote**  
+**Blue = Bacteria**  
+**Red = our metagenome**  
 
 <img src="/images/16S_tree.png">
 
