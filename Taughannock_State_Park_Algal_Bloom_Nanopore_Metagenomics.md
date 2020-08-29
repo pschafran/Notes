@@ -354,7 +354,7 @@ for i in {1..10} ; do flye --nano-raw taughannock_HAB_subset"$i".fastq -g 50m -t
 
 
 #### Subset comparisons
-Total assembly vs. subsets annotated by BLASTn. Violin plots are distribution of subset results, red dots represent assembly of all data. For phylum and order, only taxa representing > 1% of contigs are shown.
+Total assembly vs. subsets annotated by BLASTn. Violin plots are distribution of subset results, red dots represent assembly of all data. For phylum, order, family, and genus only taxa representing > 1% of contigs are shown.
 
 <img src="/images/superkingdom_blastn_subsets.png">
 <img src="/images/phylum_blastn_subsets.png">
@@ -468,6 +468,8 @@ with open("classifier_family.table", "r") as classifierFile, open("assembly_subg
             outfile.write(line)
 ```
 
+** Subsetting reads doesn't 
+
 ### 8. Subset reads to refine single genome assemblies
 
 Using Victor's list of contigs, extract sequences from assembly.
@@ -485,7 +487,183 @@ picard SamToFastq I=assembly_subgenome1_contiglist.txt.fasta.sam.mapped.sam.sort
 flye --nano-raw assembly_subgenome1_contiglist.txt.fasta.sam.mapped.sam.sorted.sam.fastq --threads 12 --out-dir assembly_subgenome1_flye --genome-size 10m 
 ```
 
+### 9. Gene prediction and functional annotation
+
+Run MetaGeneMark on medaka polishing contigs here http://exon.gatech.edu/meta_gmhmmp.cgi. Also run on all subsets.
+
+| filename | total_length | number | mean_length | longest | shortest | N_count | Gaps | N50 | N50n | N70 | N70n | N90 | N90n |
+|----------|--------------|--------|-------------|---------|----------|---------|------|-----|------|-----|------|-----|------|
+| taughannock_HAB_all_porechop | 12289566 | 66490 | 184.83 | 4721 | 18 | 434440 | 415726 | 252 | 14920 | 166 | 26956 | 90 | 46758 |
+| taughannock_HAB_subset1 | 4158815 | 22234 | 187.05 | 2717 | 18 | 170921 | 162615 | 260 | 4923 | 167 | 8896 | 91 | 15556 |
+| taughannock_HAB_subset2 | 4147767 | 22429 | 184.93 | 3817 | 18 | 166000 | 158062 | 257 | 4972 | 165 | 8988 | 89 | 15732 |
+| taughannock_HAB_subset3 | 4372196 | 23827 | 183.50 | 2941 | 18 | 175815 | 167478 | 254 | 5295 | 164 | 9594 | 89 | 16715 |
+| taughannock_HAB_subset4 | 4204759 | 22534 | 186.60 | 3640 | 18 | 171250 | 162977 | 258 | 5002 | 167 | 9049 | 90 | 15822 |
+| taughannock_HAB_subset5 | 4251093 | 23034 | 184.56 | 3817 | 18 | 170895 | 162677 | 255 | 5105 | 164 | 9238 | 89 | 16160 |
+| taughannock_HAB_subset6 | 4233123 | 22922 | 184.68 | 3752 | 18 | 170188 | 161968 | 255 | 5084 | 164 | 9210 | 90 | 16103 |
+| taughannock_HAB_subset7 | 4279453 | 23609 | 181.26 | 2214 | 18 | 172744 | 164487 | 250 | 5260 | 161 | 9522 | 88 | 16600 |
+| taughannock_HAB_subset8 | 4421640 | 24095 | 183.51 | 3850 | 18 | 177176 | 168794 | 256 | 5336 | 164 | 9662 | 89 | 16902 |
+| taughannock_HAB_subset9 | 4336918 | 23930 | 181.23 | 3286 | 18 | 174203 | 165857 | 253 | 5257 | 161 | 9569 | 87 | 16797 |
+| taughannock_HAB_subset10 | 4432135 | 24061 | 184.20 | 3752 | 18 | 179131 | 170581 | 255 | 5316 | 164 | 9642 | 89 | 16893 |
+
+
+Get conversion table files for contigs, genes, COG groups, and taxonomy
+```
+cd /home/ps997/cyanobloom/taughannock_HAB_all_porechop_flye_meta_2.7/eggnog_annotation
+cut -f 1,21 gmhmmp.emapper.annotations > cog_annotations.tsv
+grep ">" ../gmhmmp.out.faa > gmhmmp.out.names
+cut -f 1,2 ../annotations/classifier_genus.table > contigs_blastn_genus.tsv
+
+
 
 ```python
+dict = {}
+with open("gmhmmp.out.names", "r") as infile:
+    for line in infile:
+            splitline = line.strip(">\n").split("\t")
+            geneName = splitline[0]
+            contigName = splitline[1].strip(">").split(" ")[0]
+            dict[geneName] = { "contigName" : contigName }
+
+with open("contigs_blastn_genus.tsv", "r") as infile:
+    for line in infile:
+            splitline = line.strip(">\n").split("\t")
+            contigName = splitline[0]
+            genusName = splitline[1]
+            for geneName in dict:
+                try:
+                    if dict[geneName]["contigName"] == contigName:
+                        dict[geneName].update({ "genusName" : genusName })
+                except KeyError:
+                    pass
+            
+with open("cog_annotations.tsv", "r") as infile:
+    for line in infile:
+            if line.startswith("#"):
+                pass
+            else:
+                splitline = line.strip("\n").split("\t")
+                geneName = splitline[0]
+                cog = splitline[1]
+                dict[geneName].update({ "cog" : list(cog)})
+
+with open("cog_table.tsv", "w") as outfile:
+    outfile.write("GeneName\tContig\tTaxon\tCOG\n")
+    for geneName in dict:
+        contigName = dict[geneName]["contigName"]
+        try:
+            genusName = dict[geneName]["genusName"]
+        except KeyError:
+            genusName = " "
+        try:
+            cog = dict[geneName]["cog"]
+        except KeyError:
+            cog = []
+        for item in cog:
+            outfile.write("%s\t%s\t%s\t%s\n" %(geneName, contigName, genusName, item))
 
 ```
+
+
+      File "<ipython-input-1-43c11607d6b3>", line 17
+        dict[geneName][]
+                       ^
+    SyntaxError: invalid syntax
+
+
+
+<img src="/images/COG_histogram.png">
+          
+<img src="/images/COG_presenceTable.png">
+
+
+
+
+---------------------------------------          
+
+### 10. 16S and 23S phylogenies
+
+Download references from SILVA
+```
+wget https://ftp.arb-silva.de/release_138_1/Exports/SILVA_138.1_LSURef_NR99_tax_silva.fasta.gz
+wget https://ftp.arb-silva.de/release_138_1/Exports/SILVA_138.1_SSURef_NR99_tax_silva.fasta.gz
+```
+
+Create blastdbs for each, run blastn using barrnap output.
+```
+makeblastdb -in SILVA_138.1_LSURef_NR99_tax_silva.fasta -dbtype nucl -parse_seqids -out SILVA_138.1_LSURef_NR99_tax_silva
+makeblastdb -in SILVA_138.1_SSURef_NR99_tax_silva.fasta -dbtype nucl -parse_seqids -out SILVA_138.1_SSURef_NR99_tax_silva
+
+blastn -query rRNA-16S.fa -evalue 1e-10 -db ~/blastdbs/SILVA_138.1_SSURef_NR99_tax_silva -outfmt 6 -out rRNA-16S.blastn.SILVA
+blastn -query rRNA-23S.fa -evalue 1e-10 -db ~/blastdbs/SILVA_138.1_LSURef_NR99_tax_silva -outfmt 6 -out rRNA-23S.blastn.SILVA
+
+sort -k1,1 -k12,12nr rRNA-16S.blastn.SILVA > rRNA-16S.blastn.SILVA.sorted
+cut -f 1 rRNA-16S.blastn.SILVA | sort | uniq > rRNA-16S.blastn.SILVA.querynames
+while read line ; do grep -m 5 "$line" rRNA-16S.blastn.SILVA.sorted ; done < rRNA-16S.blastn.SILVA.querynames > rRNA-16S.blastn.SILVA.topresults
+cut -f 2 rRNA-16S.blastn.SILVA.topresults | sort | uniq > rRNA-16S.blastn.SILVA.tophits
+getScaffoldsFromFasta.py ~/blastdbs/SILVA_138.1_SSURef_NR99_tax_silva.fasta rRNA-16S.blastn.SILVA.tophits
+cat rRNA-16S.fa rRNA-16S.blastn.SILVA.tophits.fasta > rRNA-16S_samples_and_refs.fasta
+mafft --auto --adjustdirection rRNA-16S_samples_and_refs.fasta > rRNA-16S_samples_and_refs.MAFFT.fasta
+
+sort -k1,1 -k12,12nr rRNA-23S.blastn.SILVA > rRNA-23S.blastn.SILVA.sorted
+cut -f 1 rRNA-23S.blastn.SILVA | sort | uniq > rRNA-23S.blastn.SILVA.querynames
+while read line ; do grep -m 5 "$line" rRNA-23S.blastn.SILVA.sorted ; done < rRNA-23S.blastn.SILVA.querynames > rRNA-23S.blastn.SILVA.topresults
+cut -f 2 rRNA-23S.blastn.SILVA.topresults | sort | uniq > rRNA-23S.blastn.SILVA.tophits
+getScaffoldsFromFasta.py ~/blastdbs/SILVA_138.1_LSURef_NR99_tax_silva.fasta rRNA-23S.blastn.SILVA.tophits
+cat rRNA-23S.fa rRNA-23S.blastn.SILVA.tophits.fasta > rRNA-23S_samples_and_refs.fasta
+mafft --auto --adjustdirection rRNA-23S_samples_and_refs.fasta > rRNA-23S_samples_and_refs.MAFFT.fasta
+
+iqtree -m MFP -nt AUTO -s rRNA-16S_samples_and_refs.MAFFT.fasta -bb 5000 -alrt 5000
+iqtree -m MFP -nt AUTO -s rRNA-23S_samples_and_refs.MAFFT.fasta -bb 5000 -alrt 5000
+
+grep ">" rRNA-16S.blastn.SILVA.tophits.fasta | awk -F";" '{print $1"\t"$NF}' > rRNA-16S.blastn.SILVA.tophits.renametable
+sed -i 's/>//' rRNA-16S.blastn.SILVA.tophits.renametable
+sed -i 's/ Bacteria//' rRNA-16S.blastn.SILVA.tophits.renametable 
+sed -i 's/ Eukaryota//' rRNA-16S.blastn.SILVA.tophits.renametable
+sed  -i 's/(.*)//' rRNA-16S.blastn.SILVA.tophits.renametable 
+
+grep ">" rRNA-23S.blastn.SILVA.tophits.fasta | awk -F";" '{print $1"\t"$NF}' > rRNA-23S.blastn.SILVA.tophits.renametable
+sed -i 's/>//' rRNA-23S.blastn.SILVA.tophits.renametable
+sed -i 's/ Bacteria//' rRNA-23S.blastn.SILVA.tophits.renametable 
+sed -i 's/ Eukaryota//' rRNA-23S.blastn.SILVA.tophits.renametable
+sed  -i 's/(.*)//' rRNA-23S.blastn.SILVA.tophits.renametable 
+```
+
+
+
+
+
+```python
+renameTable = {}
+with open("rRNA-16S.blastn.SILVA.tophits.renametable","r") as infile:
+    for line in infile:
+        splitline = line.strip("\n").split("\t")
+        renameTable.update({splitline[0] : splitline[1]})
+with open("rRNA-16S_samples_and_refs.MAFFT.fasta.contree","r") as infile:
+    for line in infile:
+        line = line
+for key in renameTable:
+    newName = "%s %s" %(renameTable[key],key)
+    line = line.replace(key, newName)
+with open("rRNA-16S_samples_and_refs.MAFFT.fasta.contree.renamed", "w") as outfile:
+    outfile.write("%s\n" % line)
+    
+    
+    
+renameTable = {}
+with open("rRNA-23S.blastn.SILVA.tophits.renametable","r") as infile:
+    for line in infile:
+        splitline = line.strip("\n").split("\t")
+        renameTable.update({splitline[0] : splitline[1]})
+with open("rRNA-23S_samples_and_refs.MAFFT.fasta.contree","r") as infile:
+    for line in infile:
+        line = line
+for key in renameTable:
+    newName = "%s %s" %(renameTable[key],key)
+    line = line.replace(key, newName)
+with open("rRNA-23S_samples_and_refs.MAFFT.fasta.contree.renamed", "w") as outfile:
+    outfile.write("%s\n" % line)
+```
+
+<img src="/images/16S_tree.png">
+
+<img src="/images/23S_tree.png">
