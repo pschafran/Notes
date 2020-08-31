@@ -561,8 +561,12 @@ with open("cog_table.tsv", "w") as outfile:
 
 ```
 
+#### Functional annotation results
+**Histogram of all gene COG annotations**
 <img src="/images/COG_histogram.png">
-          
+  
+  
+** Presence/absence of COG annotations by genus**
 <img src="/images/COG_presenceTable.png">
 
 
@@ -653,6 +657,8 @@ for key in renameTable:
 with open("rRNA-23S_samples_and_refs.MAFFT.fasta.contree.renamed", "w") as outfile:
     outfile.write("%s\n" % line)
 ```
+
+#### Trees
 
 **Green = Eukaryote**  
 **Blue = Bacteria**  
