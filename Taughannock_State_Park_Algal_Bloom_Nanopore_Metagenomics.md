@@ -1,6 +1,6 @@
 # Taughannock State Park Algal Bloom Nanopore Metagenomics
 
-## Draft paper: 
+## Draft paper:
 https://docs.google.com/document/d/1fhJvkneJ1Sq6AG-8kO-c0mkeYF0cZUZjH2dXriRvhD8/edit?usp=sharing
 
 
@@ -10,7 +10,7 @@ https://docs.google.com/document/d/1fhJvkneJ1Sq6AG-8kO-c0mkeYF0cZUZjH2dXriRvhD8/
 **Polished assembly:**  
 /home/ps997/cyanobloom/taughannock_HAB_all_porechop_flye_meta_2.7/assembly.racon-iter5.medaka-consensus.fasta  
 **Annotations:**  
-/home/ps997/cyanobloom/taughannock_HAB_all_porechop_flye_meta_2.7/annotations/ 
+/home/ps997/cyanobloom/taughannock_HAB_all_porechop_flye_meta_2.7/annotations/
 
 
 ## Outline:
@@ -114,8 +114,8 @@ awk -F" |\t|\\\/" '{print $1"\t"$3"\t"$NF}' contigs.split_"$RANK".tmp > contigs.
 # sed -i 's/ \(contig\|scaffold\)_.\+\(    .\+     .\+\)$/\1/' contigs.split_species.tmp2 # will have to manually change tabs to tabs in shell
 
 sed -i 's/>//' contigs.split_"$RANK".tmp2
-sed -i "s/assembly_species_//" contigs.split_"$RANK".tmp2 
-sed -i 's/.fasta//' contigs.split_"$RANK".tmp2 
+sed -i "s/assembly_species_//" contigs.split_"$RANK".tmp2
+sed -i 's/.fasta//' contigs.split_"$RANK".tmp2
 mv contigs.split_"$RANK".tmp2 contigs.split_"$RANK"
 rm contigs.split_"$RANK".tmp
 
@@ -172,7 +172,7 @@ for contig in contigDict:
 | classifier_phylum.table | 1119 | 71.2 |
 | classifier_family.table | 466 | 29.3 |
 | classifier_genus.table | 342 | 20.2 |
-| classifier_species.table | 77 | 9.5 | 
+| classifier_species.table | 77 | 9.5 |
 
 ### Graphing in R
 
@@ -230,20 +230,20 @@ mergedGGKK <- rbind(kaijuGGdf, krakenGGdf)
 mergedGGdf <- rbind(mergedGGBC, mergedGGKK)
 
 mergedGGdf_gt5 <- mergedGGdf[mergedGGdf$count >= 5, ]
-absPlot <- ggplot(mergedGGdf_gt5) + 
-    geom_bar(aes_(y=count, x=classifier, fill=genus), position="stack", stat="identity", width = 0.5) + 
-    scale_fill_manual(values=rep(brewer.pal(12,"Paired"),times=40)) + 
-    labs(x="", y="Num. annotated contigs", fill = "") + 
+absPlot <- ggplot(mergedGGdf_gt5) +
+    geom_bar(aes_(y=count, x=classifier, fill=genus), position="stack", stat="identity", width = 0.5) +
+    scale_fill_manual(values=rep(brewer.pal(12,"Paired"),times=40)) +
+    labs(x="", y="Num. annotated contigs", fill = "") +
 absPlot + theme_bw()
 
-percPlot <- ggplot(mergedGGdf_gt5) + 
-    geom_bar(aes_(y=count, x=classifier, fill=genus), position="fill", stat="identity") + 
-    scale_fill_manual(values=rep(brewer.pal(12,"Paired"),times=40)) + 
+percPlot <- ggplot(mergedGGdf_gt5) +
+    geom_bar(aes_(y=count, x=classifier, fill=genus), position="fill", stat="identity") +
+    scale_fill_manual(values=rep(brewer.pal(12,"Paired"),times=40)) +
     labs(x="", y="Prop. annotated contigs", fill = "")
 percPlot + theme_bw()
 
 
-### Histogram of unclassified contigs by length ### 
+### Histogram of unclassified contigs by length ###
 
 contigLengths <- as.data.frame(read.table("~/Box/cyanobloom/sequences/consensus_contigLengths.tsv", sep = "\t", header = FALSE))
 blastContigLengths <- as.data.frame(read.table("~/Box/cyanobloom/sequences/consensus_blastUnclassifiedcontigLengths.tsv", sep = "\t", header = FALSE))
@@ -252,9 +252,9 @@ kaijuContigLengths <- as.data.frame(read.table("~/Box/cyanobloom/sequences/conse
 krakenContigLengths <- as.data.frame(read.table("~/Box/cyanobloom/sequences/consensus_krakenUnclassifiedcontigLengths.tsv", sep = "\t", header = FALSE))
 
 
-hist <- ggplot(contigLengths, aes(x = as.numeric(contigLengths$V2))) + 
-  geom_histogram(binwidth = 10000, color = "black", fill = "white", show.legend = TRUE) + 
-  #scale_y_log10() + 
+hist <- ggplot(contigLengths, aes(x = as.numeric(contigLengths$V2))) +
+  geom_histogram(binwidth = 10000, color = "black", fill = "white", show.legend = TRUE) +
+  #scale_y_log10() +
   lims(x = c(0,750000), y = c(0,425)) +
   geom_histogram(data = blastContigLengths, aes(x= as.numeric(blastContigLengths$V2)), binwidth = 10000, alpha = 1, color = "black", fill = "blue", show.legend = TRUE) +
   geom_histogram(data = kaijuContigLengths, aes(x= as.numeric(kaijuContigLengths$V2)), binwidth = 10000, alpha = 1, color = "black", fill = "green", show.legend =  TRUE) +
@@ -322,18 +322,18 @@ for i in {1..10} ; do flye --nano-raw taughannock_HAB_subset"$i".fastq -g 50m -t
 
 #### Subset stats
 
-| filename | total_length | number | mean_length | longest | shortest | N50 | N50n | N70 | N70n | N90 | N90n | 
+| filename | total_length | number | mean_length | longest | shortest | N50 | N50n | N70 | N70n | N90 | N90n |
 |----------|--------------|--------|-------------|---------|----------|-----|------|-----|------|-----|------|
 | taughannock_HAB_all_porechop.fastq | 9348234939 | 3743030 | 2497.50 | 110215 | 1 | 3651 | 625673 | 2138 | 1307369 | 1205 | 2458719 |
-| taughannock_HAB_subset10.fastq | 1962847667 | 786036 | 2497.15 | 110215 | 1 |  3656 | 131360 | 2138 | 274453 | 1205 | 516254 | 
-| taughannock_HAB_subset1.fastq | 1959786539 | 786036 | 2493.25 | 72721 | 1 |  3643 | 131408 | 2135 | 274580 | 1203 | 516216 | 
-| taughannock_HAB_subset2.fastq | 1965166573 | 786036 | 2500.10 | 110215 | 1 |  3662 | 131253 | 2139 | 274342 | 1206 | 516224 | 
-| taughannock_HAB_subset3.fastq | 1961303538 | 786036 | 2495.18 | 110215 | 1 | 3647 | 131551 | 2137 | 274721 | 1205 | 516248 | 
-| taughannock_HAB_subset4.fastq | 1960259504 | 786036 | 2493.85 | 110215 | 1 | 3643 | 131594 | 2136 | 274711 | 1205 | 516343 | 
-| taughannock_HAB_subset5.fastq | 1961064514 | 786036 | 2494.88 | 110215 | 1 | 3639 | 131572 | 2135 | 274769 | 1204 | 516542 | 
-| taughannock_HAB_subset6.fastq | 1961001758 | 786036 | 2494.80 | 65417 | 1 | 3643 | 131629 | 2134 | 274928 | 1205 | 516765 | 
-| taughannock_HAB_subset7.fastq | 1961693062 | 786036 | 2495.68 | 79317 | 1 | 3646 | 131337 | 2135 | 274561 | 1205 | 516468 | 
-| taughannock_HAB_subset8.fastq | 1965258903 | 786036 | 2500.21 | 82641 | 1 | 3658 | 131449 | 2139 | 274593 | 1206 | 516405 | 
+| taughannock_HAB_subset10.fastq | 1962847667 | 786036 | 2497.15 | 110215 | 1 |  3656 | 131360 | 2138 | 274453 | 1205 | 516254 |
+| taughannock_HAB_subset1.fastq | 1959786539 | 786036 | 2493.25 | 72721 | 1 |  3643 | 131408 | 2135 | 274580 | 1203 | 516216 |
+| taughannock_HAB_subset2.fastq | 1965166573 | 786036 | 2500.10 | 110215 | 1 |  3662 | 131253 | 2139 | 274342 | 1206 | 516224 |
+| taughannock_HAB_subset3.fastq | 1961303538 | 786036 | 2495.18 | 110215 | 1 | 3647 | 131551 | 2137 | 274721 | 1205 | 516248 |
+| taughannock_HAB_subset4.fastq | 1960259504 | 786036 | 2493.85 | 110215 | 1 | 3643 | 131594 | 2136 | 274711 | 1205 | 516343 |
+| taughannock_HAB_subset5.fastq | 1961064514 | 786036 | 2494.88 | 110215 | 1 | 3639 | 131572 | 2135 | 274769 | 1204 | 516542 |
+| taughannock_HAB_subset6.fastq | 1961001758 | 786036 | 2494.80 | 65417 | 1 | 3643 | 131629 | 2134 | 274928 | 1205 | 516765 |
+| taughannock_HAB_subset7.fastq | 1961693062 | 786036 | 2495.68 | 79317 | 1 | 3646 | 131337 | 2135 | 274561 | 1205 | 516468 |
+| taughannock_HAB_subset8.fastq | 1965258903 | 786036 | 2500.21 | 82641 | 1 | 3658 | 131449 | 2139 | 274593 | 1206 | 516405 |
 | taughannock_HAB_subset9.fastq | 1962476257 | 786036 | 2496.67 | 79317 | 1 | 3650 | 131647 | 2137 | 274841 | 1206 | 516590 |
 
 #### Subset assemblies
@@ -382,25 +382,25 @@ Victor identified contigs using Bandage:
 13.	edge_1330, edge_2166, edge_606 (3 total)
 14.	edge_2133, edge_2139, edge_2140 (3 total)
 15.	edge_1112
-16.	edge_1468 
-17.	edge_2180 
-18.	edge_1339 
+16.	edge_1468
+17.	edge_2180
+18.	edge_1339
 19.	edge_2162 (circular)
-20.	edge_1544 
-21.	edge_1716 
-22.	edge_218 
-23.	edge_1378 
+20.	edge_1544
+21.	edge_1716
+22.	edge_218
+23.	edge_1378
 24.	edge_1202, edge_1203, edge_1204, edge_1205, edge_1208 (5 total)
-25.	edge_586 
-26.	edge_1811 
-27.	edge_645 
-28.	edge_2021 
-29.	edge_1164 
-30.	edge_1779 
-31.	edge_834 
-32.	edge_1344 
-33.	edge_1606 
-34.	edge_1354 
+25.	edge_586
+26.	edge_1811
+27.	edge_645
+28.	edge_2021
+29.	edge_1164
+30.	edge_1779
+31.	edge_834
+32.	edge_1344
+33.	edge_1606
+34.	edge_1354
 35.	edge_2172
 36.	edge_209
 37.	edge_1546
@@ -455,7 +455,7 @@ contigList = []
 with open("assembly_subgenome1_contiglist.txt", "r") as contigFile:
     for line in contigFile:
         contigList.append(line.strip("\n"))
-        
+
 with open("classifier_family.table", "r") as classifierFile, open("assembly_subgenome1_classifier_family.tsv", "w") as outfile:
     linecount = 0
     for line in classifierFile:
@@ -480,7 +480,7 @@ samtools sort assembly_subgenome1_contiglist.txt.fasta.sam.mapped.sam > assembly
 
 picard SamToFastq I=assembly_subgenome1_contiglist.txt.fasta.sam.mapped.sam.sorted.sam FASTQ=assembly_subgenome1_contiglist.txt.fasta.sam.mapped.sam.sorted.sam.fastq
 
-flye --nano-raw assembly_subgenome1_contiglist.txt.fasta.sam.mapped.sam.sorted.sam.fastq --threads 12 --out-dir assembly_subgenome1_flye --genome-size 10m 
+flye --nano-raw assembly_subgenome1_contiglist.txt.fasta.sam.mapped.sam.sorted.sam.fastq --threads 12 --out-dir assembly_subgenome1_flye --genome-size 10m
 ```
 
 ** This doesn't help either!!!**
@@ -533,7 +533,7 @@ with open("contigs_blastn_genus.tsv", "r") as infile:
                         dict[geneName].update({ "genusName" : genusName })
                 except KeyError:
                     pass
-            
+
 with open("cog_annotations.tsv", "r") as infile:
     for line in infile:
             if line.startswith("#"):
@@ -564,8 +564,8 @@ with open("cog_table.tsv", "w") as outfile:
 #### Functional annotation results
 **Histogram of all gene COG annotations**
 <img src="/images/COG_histogram.png">
-  
-  
+
+
 ** Presence/absence of COG annotations by genus**
 <img src="/images/COG_presenceTable.png">
 
@@ -611,15 +611,15 @@ iqtree -m MFP -nt AUTO -s rRNA-23S_samples_and_refs.MAFFT.fasta -bb 5000 -alrt 5
 
 grep ">" rRNA-16S.blastn.SILVA.tophits.fasta | awk -F";" '{print $1"\t"$NF}' > rRNA-16S.blastn.SILVA.tophits.renametable
 sed -i 's/>//' rRNA-16S.blastn.SILVA.tophits.renametable
-sed -i 's/ Bacteria//' rRNA-16S.blastn.SILVA.tophits.renametable 
+sed -i 's/ Bacteria//' rRNA-16S.blastn.SILVA.tophits.renametable
 sed -i 's/ Eukaryota//' rRNA-16S.blastn.SILVA.tophits.renametable
-sed  -i 's/(.*)//' rRNA-16S.blastn.SILVA.tophits.renametable 
+sed  -i 's/(.*)//' rRNA-16S.blastn.SILVA.tophits.renametable
 
 grep ">" rRNA-23S.blastn.SILVA.tophits.fasta | awk -F";" '{print $1"\t"$NF}' > rRNA-23S.blastn.SILVA.tophits.renametable
 sed -i 's/>//' rRNA-23S.blastn.SILVA.tophits.renametable
-sed -i 's/ Bacteria//' rRNA-23S.blastn.SILVA.tophits.renametable 
+sed -i 's/ Bacteria//' rRNA-23S.blastn.SILVA.tophits.renametable
 sed -i 's/ Eukaryota//' rRNA-23S.blastn.SILVA.tophits.renametable
-sed  -i 's/(.*)//' rRNA-23S.blastn.SILVA.tophits.renametable 
+sed  -i 's/(.*)//' rRNA-23S.blastn.SILVA.tophits.renametable
 ```
 
 
@@ -640,9 +640,9 @@ for key in renameTable:
     line = line.replace(key, newName)
 with open("rRNA-16S_samples_and_refs.MAFFT.fasta.contree.renamed", "w") as outfile:
     outfile.write("%s\n" % line)
-    
-    
-    
+
+
+
 renameTable = {}
 with open("rRNA-23S.blastn.SILVA.tophits.renametable","r") as infile:
     for line in infile:
@@ -667,3 +667,35 @@ with open("rRNA-23S_samples_and_refs.MAFFT.fasta.contree.renamed", "w") as outfi
 <img src="/images/16S_tree.png">
 
 <img src="/images/23S_tree.png">
+
+
+# Illumina Sequencing
+## Shotgun Metagenome
+Found samples in freezer, extracted DNA from 2 tube using EZ-DNA. Library construction and 2Gb sequencing by MiGS in January 2021. Data received 29 Jan. 2021. Stored on server at `/home/ps997/cyanobloom/illumina/Taughannock_HAB_S232_R*_001.fastq.gz`.
+```
+# Quality Filtering
+fastp --in1 Taughannock_HAB_S232_R1_001.fastq.gz --in2 Taughannock_HAB_S232_R2_001.fastq.gz --out1 Taughannock_HAB_S232_R1_001.fastp.fastq.gz --out2 Taughannock_HAB_S232_R2_001.fastp.fastq.gz --detect_adapter_for_pe --correction -p -5 -3 -w 12
+```
+Reads Pre-filter: 28.52 M  
+Reads Post-filter: 27.77 M  
+Bases Pre-filter: 3.62 G  
+Bases Post-filter: 3.51 G  
+Full report: [Taughannock_HAB_fastp_report.html](/Taughannock_HAB_fastp_report.html)  
+
+### Contig Coverage
+Comparing read depth (coverage) of polished assembly contigs, ONT vs. Illumina, normalized to 1-100 scale.  
+<img src="/images/Illumina_vs_ONT_contig_coverage.png">  
+Linear models (blue lines) significantly positive at p<0.001 with slopes 1.007 to 1.174, similar to x=y (red lines), but spread fairly high (r^2 = 0.3-0.5).  
+Only ~75% of Illumina reads mapping to assembly!
+
+### Illumina Assembly
+Metagenomic assembly by SPAdes:  
+sum = 183936875, n = 489770, ave = 375.56, largest = 220353  
+N50 = 353, n = 110888  
+N60 = 284, n = 169368  
+N70 = 256, n = 238193  
+N80 = 237, n = 312982  
+N90 = 220, n = 393602  
+N100 = 56, n = 489770  
+N_count = 49530  
+Gaps = 822  
