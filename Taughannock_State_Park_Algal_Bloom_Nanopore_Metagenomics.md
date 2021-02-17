@@ -26,13 +26,13 @@ https://docs.google.com/document/d/1fhJvkneJ1Sq6AG-8kO-c0mkeYF0cZUZjH2dXriRvhD8/
 ### 1. Trim reads
 
 
-```python
+```bash
 cd /home/ps997/cyanobloom
 porechop -i taughannock_HAB_all.fastq -o taughannock_HAB_all_porechop.fastq -v 3 > porechop.out
 ```
 
 ### Trimming Results:
-```
+```bash
 grep "reads" porechop.out
 
 Loading reads
@@ -52,7 +52,7 @@ Splitting reads containing middle adapters
 Note: Genome size estimate comes from previous assembly
 
 
-```python
+```bash
 conda activate flye_2.7
 flye --nano-raw taughannock_HAB_all_porechop.fastq -t 12 -g 50m --meta -o taughannock_HAB_all_porechop_flye_meta_2.7
 ```
@@ -60,7 +60,7 @@ flye --nano-raw taughannock_HAB_all_porechop.fastq -t 12 -g 50m --meta -o taugha
 ### 3. Polish
 
 
-```python
+```bash
 # racon
 cd /home/ps997/cyanobloom/taughannock_HAB_all_porechop_flye_meta_2.7/
 ln -s assembly.fasta assembly.racon-iter0.fasta
@@ -71,7 +71,7 @@ done
 ```
 
 
-```python
+```bash
 # medaka
 conda activate medaka
 medaka_consensus -i ../taughannock_HAB_all_porechop.fastq -d assembly.racon-iter5.fasta -t 8
@@ -87,40 +87,53 @@ medaka_consensus -i ../taughannock_HAB_all_porechop.fastq -d assembly.racon-iter
 ### 4.  Taxonomic annotation
 
 
-```python
-mkdir annotations ; mkdir annotation/blastn ; mkdir annotation/centrifuge ; mkdir annotation/kaiju ; mkdir annotation/kraken2
-
+```bash
 ### Commands
 blastn -query assembly.racon-iter5.medaka-consensus.fasta -db ~/blastdbs/nt/nt -out blastn.results -outfmt "6 qseqid staxids bitscore" -num_threads 12 -evalue 1e-10
 
-centrifuge -x ~/centrifugeDBs/nt/nt -k -p 12 -f assembly.racon-iter5.medaka-consensus.fasta -S centrifuge.results --report-file centrifuge.report
+centrifuge -x ~/centrifugeDBs/nt/nt -k 1 -p 12 -f assembly.racon-iter5.medaka-consensus.fasta -S centrifuge.results --report-file centrifuge.report
 
 kaiju-run -t ~/blastdbs/nodes.dmp -f ~/kaijuDBs/nr_complete/nr_complete.fmi -i assembly.racon-iter5.medaka-consensus.fasta -o kaiju.results
 
 kraken2-run -db ~/krakenDBs/kraken_nt --threads 12 --output kraken.results assembly.racon-iter5.medaka-consensus.fasta
 
 ```
+```bash
+# set up directories for output
+mkdir annotation ; cd annotation ; mkdir blastn ; mkdir centrifuge ; mkdir kaiju ; mkdir kraken
+for i in * ; do cd $i ; mkdir split_superkingdom ; mkdir split_phylum ; mkdir split_class ; mkdir split_order ; mkdir split_family ; mkdir split_genus ; mkdir split_species ; cd .. ; done
+# run parser script to get annotations at all taxonomic levels
+cd blastn
+for i in superkingdom phylum class order family genus species ; do taxonomicParser.py -hits ../../blastn.results -i ../../pilon-iter10.fasta -rank $i -o pilon-iter10 ; mv *"$i"_*.fasta split_"$i" ; done
+cd ../centrifuge
+for i in superkingdom phylum class order family genus species ; do taxonomicParser.py -hits ../../centrifuge.results -centrifuge -i ../../pilon-iter10.fasta -rank $i -o pilon-iter10 ; mv *"$i"_*.fasta split_"$i" ; done
+cd ../kaiju
+for i in superkingdom phylum class order family genus species ; do taxonomicParser.py -hits ../../kaiju.results -kraken -i ../../pilon-iter10.fasta -rank $i -o pilon-iter10 ; mv *"$i"_*.fasta split_"$i" ; done
+cd ../kraken
+for i in superkingdom phylum class order family genus species ; do taxonomicParser.py -hits ../../kraken.results -kraken -i ../../pilon-iter10.fasta -rank $i -o pilon-iter10 ; mv *"$i"_*.fasta split_"$i" ; done
+```
 
-
-```python
+```bash
+# traverse directories with taxonomicParser.py results, get contig ID, search program name, and taxonomic annotation
 RANK="superkingdom"
 grep ">" assembly.racon-iter5.medaka-consensus.fasta > contig.names
 while read contig ; do grep $contig */split_"$RANK"/*fasta | awk -v contig=$contig 'BEGIN { FS=":" }  { print $2"\t"$1 }' ; done < contig.names > contigs.split_"$RANK".tmp
 # next line parses the file path to get contig ID, annotation tool, and taxonomic group e.g. contig1 \t blastn \t Bacteria
 # need to modify search pattern for files with other directory structure or names
-awk -F" |\t|\\\/" '{print $1"\t"$3"\t"$NF}' contigs.split_"$RANK".tmp > contigs.split_"$RANK".tmp2
+awk -F" |\t|\\\/" '{print $1"\t"$2"\t"$NF}' contigs.split_"$RANK".tmp > contigs.split_"$RANK".tmp2
 # for species level use this awk + sed combo instead of line above
 # awk -F"|\t|\\\/" '{print $1"\t"$2"\t"$NF}' contigs.split_"$RANK".tmp > contigs.split_"$RANK".tmp2
 # sed -i 's/ \(contig\|scaffold\)_.\+\(    .\+     .\+\)$/\1/' contigs.split_species.tmp2 # will have to manually change tabs to tabs in shell
 
 sed -i 's/>//' contigs.split_"$RANK".tmp2
-sed -i "s/assembly_species_//" contigs.split_"$RANK".tmp2
+sed -i "s/pilon-iter10_superkingdom_//" contigs.split_"$RANK".tmp2
 sed -i 's/.fasta//' contigs.split_"$RANK".tmp2
 mv contigs.split_"$RANK".tmp2 contigs.split_"$RANK"
 rm contigs.split_"$RANK".tmp
-
+```
+```python
 ### python
-openfile = open("contigs.split_superkingdom","r")
+openfile = open("contigs.split_genus","r")
 contigDict = {}
 
 for line in openfile:
@@ -132,8 +145,8 @@ for line in openfile:
 	except:
 		contigDict[contig] = {program:kingdom}
 
-outfile = open("classifier_species.table", "w")
-outfile.write("Contig\tBlast_superkingdom\tCentrifuge_superkingdom\tKaiju_superkingdom\tKraken_superkingdom\n")
+outfile = open("classifier_genus.table", "w")
+outfile.write("Contig\tBlast\tCentrifuge\tKaiju\tKraken\n")
 
 for contig in contigDict:
 	try:
@@ -156,6 +169,8 @@ for contig in contigDict:
 
 
 ```
+
+
 
 ### Annotation Results
 
@@ -183,10 +198,10 @@ library(viridis)
 library(RColorBrewer)
 {
 genusDf <- as.data.frame(read.table("classifier_superkingdom.tsv", header = TRUE, row.names = 1 , sep = "\t"))
-genus_blast <- as.data.frame(table(genusDf$Blast_Superkingdom, useNA = "always"))
-genus_centrifuge <- as.data.frame(table(genusDf$Centrifuge_Superkingdom, useNA = "always"))
-genus_kaiju <- as.data.frame(table(genusDf$Kaiju_Superkingdom, useNA = "always"))
-genus_kraken <- as.data.frame(table(genusDf$Kraken_Superkingdom, useNA = "always"))
+genus_blast <- as.data.frame(table(genusDf$Blast, useNA = "always"))
+genus_centrifuge <- as.data.frame(table(genusDf$Centrifuge, useNA = "always"))
+genus_kaiju <- as.data.frame(table(genusDf$Kaiju, useNA = "always"))
+genus_kraken <- as.data.frame(table(genusDf$Kraken, useNA = "always"))
 }
 {
 mergedTableBC <- merge(genus_blast, genus_centrifuge, by = 1, all = TRUE)
@@ -233,7 +248,7 @@ mergedGGdf_gt5 <- mergedGGdf[mergedGGdf$count >= 5, ]
 absPlot <- ggplot(mergedGGdf_gt5) +
     geom_bar(aes_(y=count, x=classifier, fill=genus), position="stack", stat="identity", width = 0.5) +
     scale_fill_manual(values=rep(brewer.pal(12,"Paired"),times=40)) +
-    labs(x="", y="Num. annotated contigs", fill = "") +
+    labs(x="", y="Num. annotated contigs", fill = "")
 absPlot + theme_bw()
 
 percPlot <- ggplot(mergedGGdf_gt5) +
@@ -664,9 +679,9 @@ with open("rRNA-23S_samples_and_refs.MAFFT.fasta.contree.renamed", "w") as outfi
 **Blue = Bacteria**  
 **Red = our metagenome**  
 
-<img src="/images/16S_tree.png">
+<img src="images/16S_tree.png">
 
-<img src="/images/23S_tree.png">
+<img src="images/23S_tree.png">
 
 
 # Illumina Sequencing
@@ -684,7 +699,7 @@ Full report: [Taughannock_HAB_fastp_report.html](/Taughannock_HAB_fastp_report.h
 
 ### Contig Coverage
 Comparing read depth (coverage) of polished assembly contigs, ONT vs. Illumina, normalized to 1-100 scale.  
-<img src="/images/Illumina_vs_ONT_contig_coverage.png">  
+<img src="images/Illumina_vs_ONT_contig_coverage.png">  
 Linear models (blue lines) significantly positive at p<0.001 with slopes 1.007 to 1.174, similar to x=y (red lines), but spread fairly high (r^2 = 0.3-0.5).  
 Only ~75% of Illumina reads mapping to assembly!
 
@@ -699,3 +714,232 @@ N90 = 220, n = 393602
 N100 = 56, n = 489770  
 N_count = 49530  
 Gaps = 822  
+
+### Nanopore Assembly Polishing
+Ran 10 iterations of Pilon with mapped illumina data as --frags and mapped nanopore data as --nanopore.
+<img src="images/HAB_pilon_polishing.png">
+
+Tabulate number of changes made to each contig
+```bash
+awk -F" |:" '{print $1}' pilon-iter1.changes > pilon-iter1.changes.contigs
+pyTable.py pilon-iter1.changes.contigs > pilon-iter1.changes.contigs.counts
+```
+
+Combine mean read coverage with tabulated changes per contig:
+```python
+with open("pilon-iter8.illuminaVSont.meanDepth.tsv","r") as infile:
+	dict = {}
+	for line in infile:
+		splitline = line.strip("\n").split("\t")
+		dict.update({splitline[0] : [splitline[1], splitline[2]]})
+
+with open("pilon-iter1.changes.contigs.counts","r") as infile2:
+	for line in infile2:
+		splitline = line.strip("\n").split("\t")
+		dict[splitline[0]].append(splitline[1])
+
+with open("pilon-iter8.illuminaVSont.meanDepth.changeCounts.tsv","w") as outfile:
+	for key in dict:
+		try:
+			outfile.write(key + "\t" + dict[key][0] + "\t" + dict[key][1] + "\t" + dict[key][2] + "\n")
+		except:
+			outfile.write(key + "\t" + dict[key][0] + "\t" + dict[key][1] + "\t0\n")
+```
+Plot in R
+```
+meanDepthCounts <- read.delim("~/Desktop/HAB/Illumina_polished_asm/pilon-iter8.illuminaVSont.meanDepth.changeCounts.tsv", sep = "\t", header = FALSE)
+plot(meanDepthCounts$V4, meanDepthCounts$V3, pch = 20, cex = 0.5)
+plot(meanDepthCounts$V4, meanDepthCounts$V3, pch = 20, cex = 0.5, xlim = c(0,50))
+```
+<img src="images/HAB_coverage_v_changes.png">
+<img src="images/HAB_coverage_v_changes_lowrange.png">  
+
+Most contigs with high number of changes (>500) have lower nanopore read coverage (<50). But doesn't account for wide range in contig length -- need to calculate changes/bp. Also coverage is highly variable across contigs, so need to examine coverage at location of changes.  
+
+Parse changes file, get contig and position of each change, rum samtools depth to get nanopore depth at that position.
+```python
+import subprocess
+with open("pilon-iter1.changes", "r") as infile:
+  outfile = open("pilon-iter1.depthByChangeSite.txt", "w")
+  for line in infile:
+    splitline = line.strip("\n").split(" ")
+    splitline2 = splitline[0].split(":")
+    contig = splitline2[0]
+    range = splitline2[1].split("-")
+    if len(range) == 1:
+      range.append(range[0])
+    cmd = ["samtools","depth", "-a", "-r", "%s:%s" %(contig, "-".join(range)), "consensus.readsmapped.bam"]
+    proc = subprocess.run(cmd, capture_output=True, text=True)
+    outfile.write(proc.stdout)
+outfile.close()
+    #results = proc.stdout.split("\n")
+    #for returnLine in results:
+    #  splitReturnLine = returnLine.strip("\n").split("\t")
+    #  try:
+    #    print(splitReturnLine[2])
+    #  except:
+    #    continue
+```
+Get nanopore read depths for all sites in metagenome, then cut columns from file and file with changed sites.
+```bash
+samtools depth -a -a consensus.readsmapped.bam > pilon-iter1.depthAllSites.tx
+cut -f 3 pilon-iter1.depthAllSites.txt > pilon-iter1.depthAllSites.depths.txt
+cut -f 3 pilon-iter1.depthByChangeSite.txt > pilon-iter1.depthByChangeSite.depths.txt
+```
+Import into R
+```
+depthAllSites <- read.delim("~/Desktop/HAB/Illumina_polished_asm/pilon-iter1.depthAllSites.depths.txt", header = FALSE)
+depthChangedSites <- read.delim("~/Desktop/HAB/Illumina_polished_asm/pilon-iter1.depthByChangeSite.depths.txt", header = FALSE)
+
+t.test(depthAllSites$V1, depthChangedSites$V1, alternative = "two.sided", paired = FALSE, conf.level = 0.99)
+>	Welch Two Sample t-test
+>
+> data:  depthAllSites$V1 and depthChangedSites$V1
+> t = -167.01, df = 262845, p-value < 2.2e-16
+> alternative hypothesis: true difference in means is not equal to 0
+> 99 percent confidence interval:
+>  -106.7317 -103.4894
+> sample estimates:
+> mean of x mean of y
+> 122.5744  227.6849
+
+hist(log(depthAllSites$V1), breaks = 100, xlab = "ln(depth) of all sites", main = "")
+hist(log(depthChangedSites$V1), xlim = c(0,8), breaks = 100, xlab = "ln(depth) of changed sites", main = "")
+```
+<img src="images/HAB_changes_by_depth.png">  
+
+T-test results strongly suggest (p < 2.2e-16) that sites changed during Illlumina polishing had higher nanopore coverage (mean 227.7) than all sites in the metagenome (mean 122.6). Both distributions appear to be bimodal, violating t-test assumptions, but relative heights of peaks suggest the 'high coverage' peak of the changed sites is taller relative to its 'low coverage' peak, compared to the peaks for all sites. May point to multiple strains of Dolichospermum as suspected from assembly graph -- need to investigate which are high-coverage/high-change contigs.
+```bash
+# get changed sites with coverage > 100 (ln(4.6))
+awk -F"\t" '{ if ($3 > 100) print $0}' pilon-iter1.depthByChangeSite.txt > pilon-iter1.depthByChangeSite.gt100.txt
+cut -f 1 pilon-iter1.depthByChangeSite.gt100.txt > pilon-iter1.depthByChangeSite.gt100.contigs.txt
+# summarize # changed sites per contig
+pyTable.py pilon-iter1.depthByChangeSite.gt100.contigs.txt > pilon-iter1.depthByChangeSite.gt100.contigSummary.txt
+# In R, determined 11 of the high-coverage contigs contain ~50% of all changes
+# Found all are Anabaena/Dolichospermum contigs
+grep -f pilon-iter1.depthByChangeSite.gt100.n50.contigs.txt annotation/classifier_genus.table
+> contig_101_segment0	Dolichospermum	Anabaena	Anabaena	Dolichospermum
+> contig_120_segment0	Dolichospermum	Anabaena	Anabaena	Dolichospermum
+> contig_122_segment1	Dolichospermum	Anabaena	Anabaena	Anabaena
+> contig_126_segment0	Dolichospermum	Anabaena	Anabaena	Dolichospermum
+> contig_300_segment0	Anabaena	Anabaena	Anabaena	Dolichospermum
+> contig_72_segment0	Dolichospermum	Anabaena	Anabaena	Dolichospermum
+> contig_80_segment7	Dolichospermum	Anabaena	Anabaena	Dolichospermum
+> contig_81_segment0	Dolichospermum	Anabaena	Anabaena	Dolichospermum
+> contig_83_segment0	Dolichospermum	Anabaena	Anabaena	Dolichospermum
+> contig_89_segment2	Planktophila	Anabaena	root	Anabaena
+> contig_93_segment1	Dolichospermum	Anabaena	Anabaena	Anabaena
+```
+That all the high-coverage contigs with most of the changes could still be affect of those contigs being longer. Next, calculate changes/bp.
+```bash
+# Extract contig lengths from samtools indexed fasta
+cut -f 1,2 consensus.fasta.fai > pilon-iter1.contigLengths.txt
+# Use previously calculated number of changes per contig
+pilon-iter1.changes.contigs.counts
+
+```
+Merge contig length list and changed site by contig list
+```python
+dict = {}
+with open("pilon-iter1.contigLengths.txt", "r") as lengthFile:
+  for line in lengthFile:
+    splitline = line.strip("\n").split("\t")
+    contigName = splitline[0]
+    contigLength = float(splitline[1])
+    dict.update({contigName : [contigLength]})
+with open("pilon-iter1.changes.contigs.counts", "r") as changeFile:
+  for line in changeFile:
+    splitline = line.strip("\n").split("\t")
+    contigName = splitline[0]
+    contigChanges = float(splitline[1])
+    dict[contigName].append(contigChanges)
+with open("pilon-iter1.changesByLength.txt", "w") as outfile:
+  outfile.write("Contig\tLength\tChanges\tChanges_per_bp\n")
+  for key in dict:
+    try:
+      changes = dict[key][1]
+      ratio = float(dict[key][1]/dict[key][0])
+    except:
+      changes = 0
+      ratio = 0
+    outfile.write("%s\t%d\t%d\t%f\n" %(key, dict[key][0], changes, ratio))
+```
+In R, test relationships between length, changes, and coverage
+```
+changesByLength <- read.delim("~/Desktop/HAB/Illumina_polished_asm/pilon-iter1.changesByLength.txt", sep = "\t", header = TRUE)
+
+# linear model of changes vs. contig length
+changesByLength_lm <- lm(Changes ~ Length, data = changesByLength)
+
+# generate confidence interval of linear model
+newx = seq(min(changesByLength$Length),max(changesByLength$Length),by = 1)
+pred_interval <- predict(changesByLength_lm, newdata=data.frame(Length=newx), interval="prediction",level = 0.9999)
+pred_lower <- lm(pred_interval[,2] ~ newx)
+pred_upper <- lm(pred_interval[,3] ~ newx)
+
+# separate dataframe into contigs in 'high-coverage' and 'low-coverage' peaks.
+changesByLength_covgt100 <- changesByLength[changesByLength$Contig %in% depthChangesgt100$V1 ,]
+changesByLength_covlt100 <- changesByLength[!(changesByLength$Contig %in% depthChangesgt100$V1) ,]
+
+# t-test of changes/bp ratio between high-coverage and low-coverage contigs
+t.test(changesByLength_covgt100$Changes_per_bp, changesByLength_covlt100$Changes_per_bp, alternative = "two.sided", paired = FALSE, conf.level = 0.999)
+>	Welch Two Sample t-test
+>
+> data:  changesByLength_covgt100$Changes_per_bp and changesByLength_covlt100$Changes_per_bp
+> t = -3.9646, df = 427.73, p-value = 8.617e-05
+> alternative hypothesis: true difference in means is not equal to 0
+> 99.9 percent confidence interval:
+>  -0.0026243938 -0.0002347998
+> sample estimates:
+>   mean of x   mean of y
+> 0.001594552 0.003024149
+
+# plot
+plot(changesByLength$Changes ~ changesByLength$Length, pch = 20, cex = 0.5, xlab = "Length (bp)", ylab = "Changes", log ="x", ylim = c(0,1000))
+abline(changesByLength_lm, col = "red", untf = TRUE)
+abline(pred_lower, untf = TRUE, lwd = 1, lty = 'dashed')
+abline(pred_upper, untf = TRUE, lwd = 1, lty = 'dashed')
+points(changesByLength_covgt100$Changes ~ changesByLength_covgt100$Length, pch = 2, cex = 0.5, , bg = "blue", col = "blue")
+```
+So, high-coverage contigs have significantly lower changes/bp than low-coverage contigs. This fits expectation that with greater coverage, nanopore can self-polish more errors.
+
+<img src="images/HAB_changes_v_length.png">
+Blue triangles are contigs with high-coverage edited sites. Some contigs probably have different proportions of high:low coverage edited site.
+
+```python
+dict = {}
+with open("pilon-iter1.depthByChangeSite.txt", "r") as infile:
+  for line in infile:
+    splitline = line.strip("\n").split("\t")
+    contigName = splitline[0]
+    siteDepth = int(splitline[2])
+    if siteDepth < 100:
+      try:
+        dict[contigName]["lowCov"].append(siteDepth)
+      except:
+        try:
+          dict[contigName].update({"lowCov" : [siteDepth]})
+        except:
+          dict[contigName] = {"lowCov" : [siteDepth]}
+    elif siteDepth >= 100:
+      try:
+        dict[contigName]["hiCov"].append(siteDepth)
+      except:
+        try:
+          dict[contigName].update({"hiCov" : [siteDepth]})
+        except:
+          dict[contigName] = {"hiCov" : [siteDepth]}
+with open("pilon-iter1.depthByChangeSite.hi-loCovRatio.txt", "w") as outfile:
+  for key in dict:
+    try:
+      hiCovLen = len(dict[key]["hiCov"])
+    except:
+      hiCovLen = 0.01
+    try:
+      lowCovLen = len(dict[key]["lowCov"])
+    except:
+      lowCovLen = 0.01
+    ratio = hiCovLen/lowCovLen
+    outfile.write("%s\t%s\n" %(key,ratio))
+
+```
