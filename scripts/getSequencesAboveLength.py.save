@@ -1,0 +1,18 @@
+#! /usr/bin/python
+
+# Usage: getSeqsAboveLength.py seqs.fasta/q length
+
+import sys
+from Bio import SeqIO
+ 
+length = sys.argv[2]
+filetype = sys.argv[1].split(".")[-1]
+filename = ".".join(sys.argv[1].split(".")[0:-1])
+outfile = "%s_%s.%s" %(filename, length, filetype)
+
+print(filetype)
+print(filename)
+print(outfile)
+
+input_seq_iterator = SeqIO.parse(sys.argv[1], filety(print(record) for record in input_seq_iterator if len(record.seq) >= length)
+SeqIO.write(hit_seq_iterator, outfile, filetype)

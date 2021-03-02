@@ -70,8 +70,10 @@ for length in sorted(contigLengthList, reverse=True):
 		n50list.append(length)
 		n50size += length
 	else:
-		pass
+		n50list.append(length)
+		n50size += length
 n50 = np.min(n50list)
+n50 = 0
 print("Assembly Size: %s" %(assemblySize))
 
 movAvgDict = {}
@@ -89,6 +91,7 @@ for key in movAvgDict.keys():
 	ax.set_title("%s" %(key))
 	plt.grid(which='major',axis='both',linestyle='dashed')
 	#ax.set_ylim(ymin=(contigDict[key][4] - 100), ymax = (contigDict[key][5] + 100))
+	ax.set_ylim(ymin=0, ymax=10000)
 	ax.set_axisbelow(True)
 	ax.text(0.7, 1.1, "Median Depth: %d" %(contigDict[key][2]), horizontalalignment='left', verticalalignment='center', transform=ax.transAxes, bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
 	ax.text(0.7, 1.05, "Standard Deviation: %d" %(contigDict[key][3]), horizontalalignment='left', verticalalignment='center', transform=ax.transAxes, bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
@@ -100,14 +103,12 @@ for key in movAvgDict.keys():
 fig, ax = plt.subplots(len(n50list), 1, sharex=True, sharey=True, tight_layout=True, figsize = (8,len(n50list)))
 index = 0
 for key in movAvgDict.keys():
-	halfway = int(len(n50list)/2)
 	if len(contigDict[key][0]) >= n50:
 		ax[index].plot(movAvgDict[key][0], movAvgDict[key][1])
 		ax[index].text(1.01, 0.5, key, horizontalalignment='left', verticalalignment='center',transform=ax[index].transAxes, bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
 		ax[index].spines['right'].set_visible(False)
 		ax[index].spines['top'].set_visible(False)
-		if index == halfway:
-			ax[index].set_ylabel("Read Depth")
+		ax[index].set_ylabel("Read Depth")
 		index += 1
 ax[index-1].set_xlabel("Position")
 plt.savefig("%s_n50contigs_%s.pdf" %((sys.argv[1].split(".txt")[0]), smoothingFactor),format = "pdf")

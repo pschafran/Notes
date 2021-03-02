@@ -38,9 +38,12 @@ for item in sys.argv:
 	if "-i" == item:
 		readFile = sys.argv[sys.argv.index(item)+1]
 		try:
+			testOpen = open(readFile, "r")
+			testOpen.close()
 			fileExt = readFile.split(".")[-1]
-			if fileExt != "fastq":
+			if fileExt != "fastq" and fileExt != "fq":
 				print("ERROR: Input file doesn't appear to be a FASTQ file!")
+				print("File extension seen: %s " % fileExt)
 				exit(1)
 			else:
 				print("Input file: %s" %(readFile))
@@ -72,7 +75,7 @@ for item in sys.argv:
 		outputFile = sys.argv[sys.argv.index(item)+1]
 		try:
 			fileExt = readFile.split(".")[-1]
-			if fileExt != "fastq":
+			if fileExt != "fastq" and fileExt != "fq":
 				print("ERROR: Output file doesn't appear to be a FASTQ file!")
 				exit(1)
 			else:
@@ -92,11 +95,13 @@ seqLengthDict = {}
 recordCounter = 0
 
 inputFastqDict = SeqIO.index(readFile, "fastq")
-for key in inputFastqDict.keys():
+inputFastqDictKeys = inputFastqDict.keys()
+inputFastqDictLen = float(len(inputFastqDict))
+for key in inputFastqDictKeys:
 	seqLengthDict[key] = int(len(inputFastqDict[key].seq))
 	# Progress Bar
 	recordCounter += 1
-	completionPerc = int(float(100*recordCounter)/float(len(inputFastqDict)))
+	completionPerc = int(float(100*recordCounter)/inputFastqDictLen)
 	sys.stdout.write('\r')
 	sys.stdout.write("[%-100s] %d%%" % ('='*completionPerc, completionPerc))
 	sys.stdout.flush()
@@ -109,7 +114,8 @@ sortedSeqDict = OrderedDict(sorted(seqLengthDict.items(), key = lambda item: ite
 print("Selecting longest reads to get target coverage...")
 bpSum = 0
 targetSeqList = []
-for seq in sortedSeqDict.keys():
+sortedSeqDictKeys = sortedSeqDict.keys()
+for seq in sortedSeqDictKeys:
 	currentCoverage = float(bpSum/genomeSize)
 	if currentCoverage < coverage:
 		targetSeqList.append(seq)
@@ -127,13 +133,14 @@ recordCounter = 0
 completionPerc = 0
 
 outfile = open(outputFile, "w")
+targetSeqListLen = float(len(targetSeqList))
 for targetSeq in targetSeqList:
 	record = inputFastqDict[targetSeq]
 	SeqIO.write(record, outfile, "fastq")
 	
 	#Progress Bar
 	recordCounter += 1
-	completionPerc = int(float(100*recordCounter)/float(len(targetSeqList)))
+	completionPerc = int(float(100*recordCounter)/targetSeqListLen)
 	sys.stdout.write('\r')
 	sys.stdout.write("[%-100s] %d%%" % ('='*completionPerc, completionPerc))
 	sys.stdout.flush()

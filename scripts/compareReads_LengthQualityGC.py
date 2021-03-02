@@ -7,7 +7,7 @@
 from Bio import SeqIO
 from Bio.SeqUtils import GC
 import pkg_resources
-pkg_resources.require("numpy==1.17.3")  # modified to use specific numpy
+#pkg_resources.require("numpy==1.17.3")  # modified to use specific numpy
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -41,7 +41,8 @@ for key in fileDict.keys():
 	print("Parsing file %d of %d...%s" %(fileCounter, len(fileDict.keys()), key))
 	fileIndex = SeqIO.index(key, "fastq")
 	recordCounter = 0
-	for read in fileIndex.keys():
+	fileIndexKeys = fileIndex.keys()
+	for read in fileIndexKeys:
 		record = fileIndex[read]
 		fileDict[key]["lengthList"].append(len(record.seq))
 		fileDict[key]["logLengthList"].append(log(len(record.seq)))

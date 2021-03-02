@@ -24,7 +24,12 @@ else:
 	for line in infile:
 		hitList.append(line.strip("\n"))
 
-	input_seq_iterator = SeqIO.parse(readFile, "fastq")
-	hit_seq_iterator = (record for record in input_seq_iterator \
-					   if record.name in hitList)
-	SeqIO.write(hit_seq_iterator, outFile, "fastq")
+	#input_seq_iterator = SeqIO.parse(readFile, "fastq")
+	input_seq_dict = SeqIO.index(readFile, "fastq")
+	outfile = open(outFile, "w")
+	for key in hitList:
+		record = input_seq_dict[key]
+		SeqIO.write(record, outfile, "fastq")
+	#hit_seq_iterator = (record for record in input_seq_iterator \
+	#				   if record.name in hitList)
+	#SeqIO.write(hit_seq_iterator, outFile, "fastq")

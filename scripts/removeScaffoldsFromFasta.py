@@ -13,11 +13,11 @@ if ".txt" in scaffoldID:
 	scaffoldList = []
 	writeOut=1
 	for scaffoldName in infile:
-		scaffoldList.append(scaffoldName.strip(">\n"))
+		scaffoldList.append(scaffoldName.strip(">\n").split(" ")[0])
 	for line in openInFile:
-		if ">" in line and line.strip(">\n") in scaffoldList:
+		if ">" in line and line.strip(">\n").split(" ")[0] in scaffoldList:
 			writeOut = 0
-		if ">" in line and line.strip(">\n") not in scaffoldList:
+		if ">" in line and line.strip(">\n").split(" ")[0] not in scaffoldList:
 			writeOut = 1
 			openOutFile.write(line)
 		if ">" not in line:
@@ -26,9 +26,9 @@ if ".txt" in scaffoldID:
 else:
 	writeOut = 1
 	for line in openInFile:
-		if ">" in line and line.strip(">\n") == scaffoldID:
+		if ">" in line and line.strip(">\n").split(" ")[0] == scaffoldID:
 			writeOut = 0
-		if ">" in line and line.strip(">\n") != scaffoldID:
+		if ">" in line and line.strip(">\n").split(" ")[0] != scaffoldID:
 			writeOut = 1
 			openOutFile.write(line)
 		if ">" not in line:

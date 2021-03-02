@@ -1,0 +1,35 @@
+#! /usr/bin/python
+
+# Usage: renameFasta.py seq.fasta reanme.table
+
+# Rename table is 2-column TSV with original name in col 1 and new name in col 2
+
+import sys
+
+fasta = sys.argv[1]
+table = sys.argv[2]
+
+seqNameDict = {}
+
+for line in open(table, "r"):
+	oldName = line.strip("\n").split("\t")[0]
+	newName = line.strip("\n").split("\t")[1]
+	seqNameDict[oldName] = newName
+
+outfile = open("
+for line in open(fasta, "r"):
+	filename = ".".join(file.split(".")[:-1])
+	fileext = file.split(".")[-1]
+	outfile = open("%s.renamed.%s" %(filename, fileext), "w")
+	for line in infile:
+		if line.startswith(">"):
+			counter = 0
+			while line.strip(">\n") in seqNameList:
+				counter += 1
+				line = "%s-%s" %(line.strip(">\n"), counter)
+			seqNameList.append(line.strip(">\n"))
+			outfile.write(">%s\n" % line.strip(">\n"))
+		else:
+			outfile.write(line)
+	outfile.close()
+	infile.close()

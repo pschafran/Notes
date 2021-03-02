@@ -121,7 +121,7 @@ elif centrifugeMode == 1:
 	for line in openBlastHits:
 		if centrifugeLineCount > 0:
 			splitline = line.strip("\n").split("\t")
-			if splitline[0] in blastDict.keys():
+			if splitline[0] in blastDict:
 				if splitline[2] in blastDict[splitline[0]].keys():
 					if blastDict[splitline[0]][splitline[2]] <= float(splitline[3]):
 						blastDict[splitline[0]][splitline[2]] = float(splitline[3])
@@ -138,7 +138,7 @@ else:
 	print("Parsing BLAST hits file...")
 	for line in openBlastHits:
 		splitline = line.strip("\n").split("\t")
-		if splitline[0] in blastDict.keys():
+		if splitline[0] in blastDict:
 			if splitline[1] in blastDict[splitline[0]].keys():
 				if blastDict[splitline[0]][splitline[1]] <= float(splitline[2]):
 					blastDict[splitline[0]][splitline[1]] = float(splitline[2])
@@ -152,8 +152,13 @@ else:
 openBlastHits.close()
 
 # Parsing BLAST dict for greatest bitscore for each hit and enter into taxonomyDict (taxID is key to list of contigs)
+print("Parsing results for best hit...")
 taxonomyDict = {}
-for queryKey in blastDict.keys():
+taxIDtotal = 0
+taxIDmissing = 0
+blastDictKeys = blastDict.keys()
+for queryKey in blastDictKeys:
+	taxIDtotal += 1
 	if krakenMode == 1:
 		bestStaxHit = blastDict[queryKey].keys()[0]
 		if bestStaxHit == "0":
@@ -167,6 +172,10 @@ for queryKey in blastDict.keys():
 		parentNode = nodesDict[bestStaxHit][2]
 	except KeyError:
 		print("%s taxID not found in NCBI taxonomy" %(queryKey))
+		taxIDmissing += 1
+		currentRank = "root"
+		currentNode = "1"
+		parentNode = "1"
 	while currentRank != taxonGrouping:
 		try:
 			currentNode = parentNode
@@ -175,12 +184,15 @@ for queryKey in blastDict.keys():
 			if currentNode == 1:
 				#print("Reached root without finding corrent taxonomic rank" %(currentNode, parentNode))
 				currentRank = taxonGrouping
+				break
 			elif currentNode > 1 and currentNode == parentNode:
 				#print("Error: current node and parent node are the same: %s\t%s" %(currentNode, parentNode))
 				currentRank = taxonGrouping
+				break
 		except KeyError:
 			print("Desired taxonomic level not listed for %s" %(queryKey))
-	
+			break	
+		
 	if currentNode in taxonomyDict:
 		taxonomyDict[currentNode].append(queryKey)
 	else:
@@ -197,65 +209,17 @@ elif compressed == 0:
 
 
 print("Writing output...")
-for key in taxonomyDict.keys():
+taxonomyDictKeys = taxonomyDict.keys()
+for key in taxonomyDictKeys:
 	print("%s (TaxID %s):\t%s seqs" %(nodesDict[key][1], key, len(taxonomyDict[key])))
-	outfile = open("%s_%s.%s" %(outputFilePrefix, nodesDict[key][1], fileType), "w")
+	outfile = open("%s_%s_%s.%s" %(outputFilePrefix, taxonGrouping, nodesDict[key][1], fileType), "w")
 	for targetSeq in taxonomyDict[key]:
-		record = inputSeqDict[targetSeq]
-		SeqIO.write(record, outfile, fileType)
+		try:
+			record = inputSeqDict[targetSeq]
+			SeqIO.write(record, outfile, fileType)
+		except KeyError:
+			print("%s missing from sequence file" %targetSeq)
 	outfile.close()
-
-
-
-#	print("%s" %(queryKey))
-#	try:
-#		print("\t%s,%s,%s" %(nodesDict[bestStaxHit][0], nodesDict[bestStaxHit][1], nodesDict[bestStaxHit][2]))
-#		try:
-#			parentNode = nodesDict[bestStaxHit][2]
-#			print("\t\t%s,%s,%s" %(nodesDict[parentNode][0], nodesDict[parentNode][1], nodesDict[parentNode][2]))
-#			try:
-#				grandparentNode = nodesDict[parentNode][2]
-#				print("\t\t\t%s,%s,%s" %(nodesDict[grandparentNode][0], nodesDict[grandparentNode][1], nodesDict[grandparentNode][2]))
-#			except:
-#				print("\t\t\tNo grandparent node")
-#		except:
-#			print("\t\tNo parent node")
-#	except KeyError:
-#		print("%s best hit undefined" %(queryKey))
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+percTaxIDmissing = (float(taxIDmissing)/float(taxIDtotal))*100
+if taxIDmissing > 0:
+	print("taxID not found in NCBI taxonomy for %d out of %d total sequences (%.3f percent)" %(taxIDmissing, taxIDtotal, percTaxIDmissing))

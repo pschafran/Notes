@@ -14,8 +14,13 @@ try:
 		exit(1)
 	else:
 		fileprefix = ".".join(filename.split(".")[0:-1])
+		commandline = "%s,fastq, %s.fasta, fasta" %(filename, fileprefix)
 		SeqIO.convert(filename,"fastq","%s.fasta" %(fileprefix),"fasta")
 except:
-	print("ERROR: Something went wrong...this shouldn't happen")
+	print("ERROR: Something went wrong...dumping variables")
+	print("filename = %s") % filename
+	print("filename-split = %s") % filename.split(".")
+	print("fileprefix = %s") % ".".join(filename.split(".")[0:-1])
+	print("SeqIO called with: SeqIO.convert(%s)") % commandline 
 	exit(1)
 

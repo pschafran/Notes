@@ -208,8 +208,11 @@ for key in taxonomyDictKeys:
 	print("%s (TaxID %s):\t%s seqs" %(nodesDict[key][1], key, len(taxonomyDict[key])))
 	outfile = open("%s_%s_DEV.%s" %(outputFilePrefix, nodesDict[key][1], fileType), "w")
 	for targetSeq in taxonomyDict[key]:
-		record = inputSeqDict[targetSeq]
-		SeqIO.write(record, outfile, fileType)
+		try:
+			record = inputSeqDict[targetSeq]
+			SeqIO.write(record, outfile, fileType)
+		except KeyError:
+			print("%s not found in input seqeunce file" % targetSeq)
 	outfile.close()
 percTaxIDmissing = (float(taxIDmissing)/float(taxIDtotal))*100
 print("taxID not found in NCBI taxonomy for %d out of %d total sequences (%.1f\%)" %(taxIDmissing, taxIDtotal, percTaxIDmissing))
