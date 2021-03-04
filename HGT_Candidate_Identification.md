@@ -8,11 +8,10 @@ diamond blastp -d /home/fay-wei/bin/NCBI_db/nr_20200613.dmnd -q Crichardii.v2.1.
 ```
 /home/ps997/scripts/alienIndex.py --ingroup Eukaryota --missing ingroup --file Crichardii.v2.1.allTrs.pep.nr.blastp --output Crichardii.v2.1.allTrs.pep.nr.blastp.AI
 ```
-3. Get proteins with AI > 0 indicating BLAST evalue equal or greater in the outgroup, and at least 25% of all hits in the outgroup, to avoid spurious nr entries.
+3. Get proteins with AI > 0 indicating BLAST evalue equal or greater in the outgroup, or at least 50% of all hits in the outgroup, or AI > 10.
 ```
-awk -F"\t" '{ if ($8 >= 0 && $5 > 25) print $0 }' Crichardii.v2.1.allTrs.pep.nr.blastp.AI > Crichardii.v2.1.allTrs.pep.nr.blastp.AI.candidateHGT
+awk -F"\t" '{ if ($8 >= 0 && $5 > 25 ) print $0 ; else if ( $5 > 90 || $8 > 20 ) print $0 }' Crichardii.v2.1.allTrs.pep.nr.blastp.AI > Crichardii.v2.1.allTrs.pep.nr.blastp.AI.candidateHGT
 cut -f 1 Crichardii.v2.1.allTrs.pep.nr.blastp.AI.candidateHGT > Crichardii.v2.1.allTrs.pep.nr.blastp.AI.candidateHGT.names.txt
-# getFromFasta.py Crichardii.v2.1.allTrs.pep.fa Crichardii.v2.1.allTrs.pep.nr.blastp.AI.candidateHGT.names.txt > Crichardii.v2.1.allTrs.pep.nr.blastp.AI.candidateHGT.fasta
 ```
 
 4. Get orthogroups (from Viridiplantae Orthofinder analysis, not described here) containing HGT candidates.
@@ -24,7 +23,7 @@ cd HGT_orthogroups
 
 5. Search 1KP database for additional members of each orthogroup
 ```
-for i in OG*.fa ; do diamond blastp -d /home/ps997/1kp/1kp-translated-protein.dmnd -q $i -o "$i".1kp.blasthits --max-target-seqs 100 --query-cover 25 --subject- cover 25 -b12 -c1 --evalue 1e-10 -p 24 --outfmt 6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore full_sseq ; done
+for i in OG*.fa ; do diamond blastp -d /home/ps997/1kp/1kp-translated-protein.dmnd -q $i -o "$i".1kp.blasthits --max-target-seqs 100 --query-cover 25 --subject-cover 25 -b12 -c1 --evalue 1e-10 -p 24 --outfmt 6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore full_sseq ; done
 ```
 
 6. Retrieve BLAST hits for Ceratopteris in each OG from original DIAMOND Results
@@ -53,7 +52,7 @@ for i in OG*.fa ; do cat $i "$i".nr.blasthits.fasta "$i".1kp.blasthits.fasta > "
 for i in OG*.final.fasta ; do removeDuplicateSeqFasta.py $i ; done
 ```
 
-8. Use Pfam annotation to potentially erroneous groupings by looking for files with multiple clans (grouping of families believed to have a common evolutionary ancestor). If multiple clans found, each is split into a new fasta for downstream analysis. Two output TXT files list all input files that had a single clan, and all those with multiple clans.
+8. Use Pfam annotation to filter potentially erroneous groupings by looking for files with multiple clans (grouping of families believed to have a common evolutionary ancestor). If multiple clans found, each is split into a new fasta for downstream analysis. Two output TXT files list all input files that had a single clan, and all those with multiple clans.
 ```
 for i in OG*.dupSeqsCombined.fasta ; do pfam_scan.pl -cpu 24 -fasta $i -dir /home/ps997/bin/PfamScanDB -outfile "$i".pfamscan ; done
 /home/ps997/scripts/pfamscanSingleClan.py *.pfamscan
@@ -67,18 +66,22 @@ grep -f ../Crichardii.v2.1.allTrs.pep.nr.cov25.blastp.AI.candidateHGT.names.txt 
 10. For single-clan orthogroups, align, trim, and build tree
 ```
 # Align each orthogroup, trim sites with < 75% overlap and remove sequences with < 50% "good" sites, then infer phylogeny
-while read i ; do clustalo --threads 12 -i $i -o "$i".clustal ; done < pfam_single_clan.txt
-for i in *clustal ; do /home/ps997/bin/trimal/source/trimal -in $i -out "$i".trimal.fa -resoverlap 0.75 -seqoverlap 50 ; done
-for i in *trimal.fa ; do iqtree -s $i -m MFP -B 5000 -T 8 ; done
+# while read i ; do clustalo --threads 12 -i $i -o "$i".clustal ; done < pfam_single_clan.txt
+for i in *clustal ; do /home/ps997/bin/trimal/source/trimal -in $i -out "$i".trimalAUTO.fa -automated1 ; done
+for i in *trimalAUTO.fa ; do iqtree -s $i -m MFP -B 5000 -T 8 ; done
 ```
 
 11. Parse trees to find likely HGT based on eukaryotic sequences sister or nested in bacterial sequences
 ```
 # Run traverse_tree script modified from Fay_Wei's script. Some options hardcoded in lines 14,15,16 need to be modified for each experiment
-traverse_tree.py *contree
+/home/ps997/scripts/traverse_tree.py *contree
 
 ```
 
+12. Generate eggNOG annotations
+```
+grep -f ../Crichardii.v2.1.allTrs.pep.nr.cov25.blastp.AI.candidateHGT.names.txt *dupSeqsCombined.fasta*fasta | awk -F":" '{print $1}' | sort | uniq | while read line ; do /home/fay-wei/bin/eggnog/emapper.py -m diamond --cpu 24 -i $line -o $line ; done
+```
 
 ## Alien Index
 Comparative measurement of BLAST scores to indicate strength of evidence for horizontal gene transfer, by comparing best ingroup evalue with best outgroup evalue. **Use script with DIAMOND BLASTp results generated with this specific format**:
