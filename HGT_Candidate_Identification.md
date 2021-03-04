@@ -84,6 +84,7 @@ grep -f ../Crichardii.v2.1.allTrs.pep.nr.cov25.blastp.AI.candidateHGT.names.txt 
 ```
 
 ## Alien Index
+See more details [here](https://github.com/pschafran/Notes/blob/master/Alien_Index.md).
 Comparative measurement of BLAST scores to indicate strength of evidence for horizontal gene transfer, by comparing best ingroup evalue with best outgroup evalue. **Use script with DIAMOND BLASTp results generated with this specific format**:
 ```
 diamond blastp -d ~/bin/NCBI_db/nr_20200613.dmnd -q query -o query_diamond2nr.out --max-target-seqs 100 --outfmt 6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore staxids sskingdoms skingdoms sphylums sscinames

@@ -42,6 +42,20 @@ cut -f 16 query_diamond2nr.out | sort | uniq
 cut -f 17 query_diamond2nr.out | awk -F";| " '{print $1}' | sort | uniq
 ```
 In rare cases, a taxonomic group's name might be used at multiple taxonomic levels. In this case, the `--taxon` parameter can be used to specify (superkingdom, kingdom, phylum, genus). Run `alienIndex.py --help` for more details.
+```
+Required parameters
+	--ingroup, -i	Name of taxonomic ingroup. Can be at any taxonomic level listed below. Set --taxon to search only a particular taxonomic level (use if ingroup name is shared among multiple taxonomic levels)
+	--file, -f	Diamond output file with format specified above
+Optional parameters
+	--outgroup, -g	Specify outgroup. If not set, all sequences not in the ingroup are treated as outgroup. Set this if you want to leave a 'gap' between ingroup and outgroup.
+	--ignore, -n	Specify clade within the ingroup to ignore. E.g. Ingroup is Eukaryota, but do not consider hits to Polypodiopsida.
+	--output, -o	Name of output file. If not specified, output is printed to stdout
+	--missing, -m	How to treat N/A taxonomic annotations. Available options: 'ignore' (default), 'outgroup', 'ingroup.
+	--help, -h	Display full usage
+	--log, -l	File to write log containing warnings generated and offending lines in BLAST file for debugging. Does not affect what is printed to STDOUT.
+	--taxon, -t	Usually not necessary to set. Taxonomic level for ingroup. Available options: 'superkingdom' , 'kingdom', 'phylum', 'genus'
+```
+
 
 ## Advanced Usage
 Several advanced parameters are available to let you tailor your ingroups and outgroups to include and ignore specific clades. They can occur at different taxonomic levels, but must be mutually exclusive (one group should not be nested in another).
