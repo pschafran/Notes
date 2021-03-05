@@ -1,4 +1,15 @@
 ## Find HGT candidate genes
+
+### Dependencies
+Besides these programs, custom scripts are on the server in `/home/ps997/scripts/`.
+* DIAMOND `conda install -c bioconda diamond`
+* Pfam_scan `conda install -c bioconda pfam_scan`
+* Trimal `conda install -c bioconda trimal`
+* Clustal Omega `conda install -c bioconda clustalo`
+* IQ-TREE `conda install -c bioconda iqtree`
+* eggNOG `/home/fay-wei/bin/eggnog/emapper.py`
+
+### Steps
 1. Do BLAST search of proteins, use taxonomy of best hits to identify genes with with possible/likely horizontal gene transfer origin.
 ```
 # Do DIAMOND search of C. richardii proteins
@@ -8,13 +19,19 @@ diamond blastp -d /home/fay-wei/bin/NCBI_db/nr_20200613.dmnd -q Crichardii.v2.1.
 ```
 /home/ps997/scripts/alienIndex.py --ingroup Eukaryota --missing ingroup --file Crichardii.v2.1.allTrs.pep.nr.blastp --output Crichardii.v2.1.allTrs.pep.nr.blastp.AI
 ```
-3. Get proteins with AI > 0 indicating BLAST evalue equal or greater in the outgroup, or at least 50% of all hits in the outgroup, or AI > 10.
+3. Get queries with AI > 0 indicating BLAST outgroup evalue >= ingroup and at least 25% of BLAST hits are outgroup. This criterion is pretty strigent and has missed some known HGT genes. You can try the looser option below that in addition to previous criterion also captures queries with AI > 30 OR % outgroup hits > 90. In my tests, the looser option returns about 4x more candidates.  
 ```
-awk -F"\t" '{ if ($8 >= 0 && $5 > 25 ) print $0 ; else if ( $5 > 90 || $8 > 20 ) print $0 }' Crichardii.v2.1.allTrs.pep.nr.blastp.AI > Crichardii.v2.1.allTrs.pep.nr.blastp.AI.candidateHGT
+# Few Results
+awk -F"\t" '{ if ($8 >= 0 && $5 > 25 ) print $0 }' Crichardii.v2.1.allTrs.pep.nr.blastp.AI > Crichardii.v2.1.allTrs.pep.nr.blastp.AI.candidateHGT
+
+# More Results
+awk -F"\t" '{ if ($8 >= 0 && $5 > 25 ) print $0 ; else if ($8 >= 30 || $5 > 90) print $0}' Crichardii.v2.1.allTrs.pep.nr.blastp.AI > Crichardii.v2.1.allTrs.pep.nr.blastp.AI.candidateHGT
+
+# Create a list of the names of the HGT candidates
 cut -f 1 Crichardii.v2.1.allTrs.pep.nr.blastp.AI.candidateHGT > Crichardii.v2.1.allTrs.pep.nr.blastp.AI.candidateHGT.names.txt
 ```
 
-4. Get orthogroups (from Viridiplantae Orthofinder analysis, not described here) containing HGT candidates.
+4. Get orthogroups (from Viridiplantae Orthofinder analysis, not described here) containing HGT candidates. 
 ```
 mkdir HGT_orthogroups
 for i in ~/hornwort-orthologs/orthofinder_in/OrthoFinder/Results_Jan21_1/Orthogroup_Sequences/*.fa ; do grep -f Crichardii.v2.1.allTrs.pep.nr.cov33.blastp.AI.candidateHGT.names.txt $i && cp $i HGT_orthogroups/ ; done
@@ -49,7 +66,7 @@ for i in OG*.fa ; do while read line ; do grep -m 1 $line "$i".1kp.blasthits ; d
 for i in OG*.fa ; do cat $i "$i".nr.blasthits.fasta "$i".1kp.blasthits.fasta > "$i".final.fasta ; done
 
 # Remove duplicate sequences by name, combine entries with identical AA/DNA sequence (renamed with all combined entry names)
-for i in OG*.final.fasta ; do removeDuplicateSeqFasta.py $i ; done
+for i in OG*.final.fasta ; do /home/ps997/scripts/removeDuplicateSeqFasta.py $i ; done
 ```
 
 8. Use Pfam annotation to filter potentially erroneous groupings by looking for files with multiple clans (grouping of families believed to have a common evolutionary ancestor). If multiple clans found, each is split into a new fasta for downstream analysis. Two output TXT files list all input files that had a single clan, and all those with multiple clans.
@@ -71,7 +88,9 @@ for i in *clustal ; do /home/ps997/bin/trimal/source/trimal -in $i -out "$i".tri
 for i in *trimalAUTO.fa ; do iqtree -s $i -m MFP -B 5000 -T 8 ; done
 ```
 
-11. Parse trees to find likely HGT based on eukaryotic sequences sister or nested in bacterial sequences
+11. This step not working great at the moment -- but I'm not convinced there is any automated way to parse phylogenies to confidently detect HGT. Suggest you manually review all your trees.
+
+Parse trees to find likely HGT based on eukaryotic sequences sister or nested in bacterial sequences.
 ```
 # Run traverse_tree script modified from Fay_Wei's script. Some options hardcoded in lines 14,15,16 need to be modified for each experiment
 /home/ps997/scripts/traverse_tree.py *contree
@@ -93,7 +112,7 @@ diamond blastp -d ~/bin/NCBI_db/nr_20200613.dmnd -q query -o query_diamond2nr.ou
 ```
 Output includes gene name, best ingroup and outgroup evalues, and alien index. AI ranges from about +/- 460, with scores > 0 showing better outgroup score than ingroup. AI of 10-20 has been used as cutoff for conclusive evidence of ingroup/outgroup gene origin. Output is not sorted by default, can be sorted by AI with:
 ```
-sort -k 4,4nr  query_diamond2nr.alienIndex.txt
+sort -k 8,8n  query_diamond2nr.alienIndex.txt
 ```
 You can see what ingroups are available for your BLASTp file, try:
 ```

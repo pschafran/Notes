@@ -6,7 +6,7 @@ Comparative measurement of BLAST scores to indicate strength of evidence for hor
 ## Usage
 Use script with DIAMOND BLAST results generated with this specific format. You must have a search database that was created with NCBI taxonomy information ([see here](https://github.com/bbuchfink/diamond/wiki/3.-Command-line-options#makedb-options)).
 ```
-diamond blastp -d /home/fay-wei/bin/NCBI_db/nr_20200613.dmnd -q query -o query_diamond2nr.out --max-target-seqs 100 --outfmt 6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore staxids sskingdoms skingdoms sphylums sscinames
+diamond blastp -d /home/fay-wei/bin/NCBI_db/nr_20200613.dmnd -q query.pep.fa -o query_diamond2nr.out --max-target-seqs 100 --outfmt 6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore staxids sskingdoms skingdoms sphylums sscinames
 ```
 With your BLAST results, you can process in numerous ways. The most basic way sets the ingroup, and by default anything else is treated as outgroup.
 ```
@@ -68,7 +68,7 @@ alienIndex.py --ingroup Eukaryota --outgroup Bacteria --file query_diamond2nr.ou
 
 2. The `--ignore` parameter allows you to ignore hits that would otherwise be considered ingroup. This allows you to create polyphyletic ingroups, which may be desired if previously identified HGT genes are in your search database causing AI values for known HGT genes to be < 0. Example:
 ```
-alienIndex.py --ingroup Eukaryota --ignore Viridplantae --file query_diamond2nr.out
+alienIndex.py --ingroup Eukaryota --ignore Viridiplantae --file query_diamond2nr.out
 ```
 <img src="images/AI_options_ingroup_ignore.png">
 
@@ -85,7 +85,6 @@ alienIndex.py --ingroup Eukaryota --ignore Viridiplantae --outgroup Bacteria --f
 alienIndex.py --missing ingroup --ingroup Eukaryota --file query_diamond2nr.out
 alienIndex.py --missing outgroup --ingroup Eukaryota --file query_diamond2nr.out
 alienIndex.py --missing ignore --ingroup Eukaryota --file query_diamond2nr.out
-
 ```
 5. The `--taxon` parameter can be used to specify a particular level ('superkingdom' , 'kingdom', 'phylum', or 'genus') to search for the ingroup/outgroup name. Only applies to the BLAST file (representing 14th-17th columns). This should only be used if you expect the same name to be used at multiple taxonomic levels and you need to specify one (I don't know that this ever happens, this setting is just a precaution).
 ```
@@ -98,7 +97,8 @@ The script takes the BLAST results file, and creates a dictionary where each top
 * number in the outgroup
 * result line for lowest ingroup e-value
 * result line for lower outgroup e-value
-In order to determine if each hit is a member of the ingroup or outgroup, it first tries to use the taxonomic info written in the BLAST file (14th-17th columns). If not found in those columns, the entire NCBI taxonomy tree is parsed, starting with the genus from the line and traversing up the hierarchy until the provided ingroup/outgroup name is found (or the root of the tree is reached). WARNING! Taxonomy traversal is much slower than default operation, so try to use superkingdom, kingdom, and phylum when possible. Note that entries with "N/A" or "synthetic" or "unclassified" in their 17th column Once the dictionary is completed, ingroup/outgroup percentages are calculated, and the AI is calculated, and everything is written to file or STDOUT.
+
+In order to determine if each hit is a member of the ingroup or outgroup, it first tries to use the taxonomic info written in the BLAST file (14th-17th columns). If not found in those columns, the entire NCBI taxonomy tree is parsed, starting with the genus from the line and traversing up the hierarchy until the provided ingroup/outgroup name is found (or the root of the tree is reached). WARNING! Taxonomy traversal is much slower than default operation. In my tests, it processes about 800 lines/sec, so a reasonably sized 2.5M line BLAST file will take ~1 hour to process. So try to use superkingdom, kingdom, and phylum when possible. Note that entries with "N/A" or "synthetic" or "unclassified" in their 17th column Once the dictionary is completed, ingroup/outgroup percentages are calculated, and the AI is calculated, and everything is written to file or STDOUT.
 
 
 ## Citations
