@@ -43,6 +43,15 @@ cut -f 17 query_diamond2nr.out | awk -F";| " '{print $1}' | sort | uniq
 ```
 In rare cases, a taxonomic group's name might be used at multiple taxonomic levels. In this case, the `--taxon` parameter can be used to specify (superkingdom, kingdom, phylum, genus). Run `alienIndex.py --help` for more details.
 ```
+alienIndex.py
+
+Calculate alien index (AI) for a Diamond output file that includes taxonomy info. MUST create using output format 6 command:
+--outfmt 6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue evalue staxids sskingdoms skingdoms sphylums sscinames
+
+Uses equation AI = (ln(bbhG + 1 * 10e-200)-ln(bbhO + 1 * 10e-200)) from Fan et al. (2020) Science Advances 6: eaba0111
+
+AI ranges from approximately +/- 466, with AI > 0 if evalue higher in ingroup, < 0 if evalue higher in outgroup (So AI > 0 means query is more similar to outgroup than ingroup). Also reports raw numbers and percentage of hits that fell into ingroup/outgroup.'''
+
 Required parameters
 	--ingroup, -i	Name of taxonomic ingroup. Can be at any taxonomic level listed below. Set --taxon to search only a particular taxonomic level (use if ingroup name is shared among multiple taxonomic levels)
 	--file, -f	Diamond output file with format specified above
