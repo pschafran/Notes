@@ -1027,7 +1027,9 @@ rownames(silva.taxa.print) <- NULL
 View(silva.taxa.print)
 ```
 #### Results
+
 | Num. | Kingdom | Phylum | Class | Order | Family | Genus |
+|------|---------|--------|-------|-------|--------|-------|
 | 1 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
 | 2 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
 | 3 | Bacteria | Proteobacteria | Alphaproteobacteria | Sphingomonadales | Sphingomonadaceae | Sphingorhabdus |
