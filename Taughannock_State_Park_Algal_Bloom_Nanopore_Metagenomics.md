@@ -1027,124 +1027,131 @@ rownames(silva.taxa.print) <- NULL
 View(silva.taxa.print)
 ```
 #### Results
+Read Tracking
 
-| Num. | Kingdom | Phylum | Class | Order | Family | Genus |
+|      | input | filtered | denoisedF | denoisedR | merged | nonchim |
+|------|-------|----------|-----------|-----------|--------|---------|
+| HAB16S | 21849 | 20822 | 20164 | 20474 | 18240 | 17062 |
+
+
+
+| Cluster Size | Kingdom | Phylum | Class | Order | Family | Genus |
 |------|---------|--------|-------|-------|--------|-------|
-| 1 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
-| 2 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
-| 3 | Bacteria | Proteobacteria | Alphaproteobacteria | Sphingomonadales | Sphingomonadaceae | Sphingorhabdus |
-| 4 | Bacteria | Proteobacteria | Alphaproteobacteria | Sphingomonadales | Sphingomonadaceae | Sphingorhabdus |
-| 5 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
-| 6 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
-| 7 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Rhodoferax |
-| 8 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Rhodoferax |
-| 9 | Bacteria | Proteobacteria | Gammaproteobacteria | Enterobacterales | Aeromonadaceae | Aeromonas |
-| 10 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Rhodoferax |
-| 11 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
-| 12 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Rhodoferax |
-| 13 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
-| 14 | Bacteria | Proteobacteria | Alphaproteobacteria | Elsterales | Elsteraceae | NA |
-| 15 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Rhodoferax |
-| 16 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Hyphomonadaceae | UKL13-1 |
-| 17 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Rhodoferax |
-| 18 | Bacteria | Proteobacteria | Alphaproteobacteria | Elsterales | Elsteraceae | NA |
-| 19 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | NA |
-| 20 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Hyphomonadaceae | UKL13-1 |
-| 21 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
-| 22 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
-| 23 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
-| 24 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhodospirillales | Rhodospirillaceae | Roseospirillum |
-| 25 | Bacteria | Proteobacteria | Alphaproteobacteria | NA | NA | NA |
-| 26 | Bacteria | Proteobacteria | Alphaproteobacteria | Elsterales | Elsteraceae | Elstera |
-| 27 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhodospirillales | Rhodospirillaceae | Roseospirillum |
-| 28 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
-| 29 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | NA |
-| 30 | Bacteria | Proteobacteria | Alphaproteobacteria | Elsterales | Elsteraceae | Elstera |
-| 31 | Bacteria | Proteobacteria | Alphaproteobacteria | NA | NA | NA |
-| 32 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Inhella |
-| 33 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Inhella |
-| 34 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Hydrogenophaga |
-| 35 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Pelomonas |
-| 36 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Hydrogenophaga |
-| 37 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Pelomonas |
-| 38 | Bacteria | Proteobacteria | Gammaproteobacteria | Enterobacterales | Alteromonadaceae | Rheinheimera |
-| 39 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | NA |
-| 40 | Bacteria | Proteobacteria | Gammaproteobacteria | Enterobacterales | Alteromonadaceae | Rheinheimera |
-| 41 | Bacteria | Bacteroidota | Bacteroidia | Cytophagales | Spirosomaceae | Flectobacillus |
-| 42 | Bacteria | Bacteroidota | Bacteroidia | Cytophagales | Spirosomaceae | Flectobacillus |
-| 43 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | NA |
-| 44 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
-| 45 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
-| 46 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Leptothrix |
-| 47 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Leptothrix |
-| 48 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
-| 49 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Beijerinckiaceae | Bosea |
-| 50 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Caulobacteraceae | Phenylobacterium |
-| 51 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Beijerinckiaceae | Bosea |
-| 52 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
-| 53 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiales | Incertae | Sedis | Phreatobacter |
-| 54 | Bacteria | Proteobacteria | Gammaproteobacteria | Enterobacterales | Alteromonadaceae | Rheinheimera |
-| 55 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiaceae | Allorhizobium-Neorhizobium-Pararhizobium-Rhizobium |
-| 56 | Bacteria | Proteobacteria | Gammaproteobacteria | Enterobacterales | Alteromonadaceae | Rheinheimera |
-| 57 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiales | Incertae | Sedis | Phreatobacter |
-| 58 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Caulobacteraceae | Phenylobacterium |
-| 59 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhodobacterales | Rhodobacteraceae | NA |
-| 60 | Bacteria | Proteobacteria | Alphaproteobacteria | Elsterales | Elsteraceae | NA |
-| 61 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiales | Incertae | Sedis | Phreatobacter |
-| 62 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
-| 63 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Hydrogenophaga |
-| 64 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Hydrogenophaga |
-| 65 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Hydrogenophaga |
-| 66 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Chromobacteriaceae | Vogesella |
-| 67 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
-| 68 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhodobacterales | Rhodobacteraceae | NA |
-| 69 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiaceae | Allorhizobium-Neorhizobium-Pararhizobium-Rhizobium |
-| 70 | Bacteria | Bacteroidota | Kapabacteria | Kapabacteriales | NA | NA |
-| 71 | Bacteria | Bacteroidota | Bacteroidia | Cytophagales | Bernardetiaceae | Bernardetia |
-| 72 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | NA |
-| 73 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiales | Incertae | Sedis | Phreatobacter |
-| 74 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
-| 75 | Bacteria | Proteobacteria | Alphaproteobacteria | Sphingomonadales | Sphingomonadaceae | Sphingorhabdus |
-| 76 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
-| 77 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
-| 78 | Bacteria | Bacteroidota | Kapabacteria | Kapabacteriales | NA | NA |
-| 79 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Caulobacteraceae | Brevundimonas |
-| 80 | Bacteria | Proteobacteria | Gammaproteobacteria | Enterobacterales | Aeromonadaceae | Aeromonas |
-| 81 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
-| 82 | Bacteria | Bdellovibrionota | Oligoflexia | Silvanigrellales | Silvanigrellaceae | NA |
-| 83 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Chitinimonadaceae | Chitinimonas |
-| 84 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Caulobacteraceae | Brevundimonas |
-| 85 | Bacteria | Proteobacteria | Alphaproteobacteria | SAR11 | clade | Clade | III | NA |
-| 86 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Rhodocyclaceae | NA |
-| 87 | Bacteria | Proteobacteria | Gammaproteobacteria | Pseudomonadales | Pseudomonadaceae | Pseudomonas |
-| 88 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiales | Incertae | Sedis | Phreatobacter |
-| 89 | Bacteria | Firmicutes | Bacilli | Exiguobacterales | Exiguobacteraceae | Exiguobacterium |
-| 90 | Bacteria | Myxococcota | Polyangia | Polyangiales | Polyangiaceae | Pajaroellobacter |
-| 91 | Bacteria | Proteobacteria | Gammaproteobacteria | Pseudomonadales | Pseudomonadaceae | Pseudomonas |
-| 92 | Bacteria | Proteobacteria | Alphaproteobacteria | SAR11 | clade | Clade | III | NA |
-| 93 | Bacteria | Bacteroidota | Bacteroidia | Cytophagales | Bernardetiaceae | Bernardetia |
-| 94 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
-| 95 | Bacteria | Proteobacteria | Gammaproteobacteria | Pseudomonadales | Cellvibrionaceae | Cellvibrio |
-| 96 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Chitinimonadaceae | Chitinimonas |
-| 97 | Bacteria | Deinococcota | Deinococci | Deinococcales | Deinococcaceae | Deinococcus |
-| 98 | Bacteria | Cyanobacteria | Cyanobacteriia | Pseudanabaenales | Pseudanabaenaceae | Pseudanabaena | PCC-7429 |
-| 99 | Bacteria | Bacteroidota | Bacteroidia | Chitinophagales | Chitinophagaceae | Ferruginibacter |
-| 100 | Bacteria | Myxococcota | Polyangia | Blfdi19 | NA | NA |
-| 101 | Bacteria | Bacteroidota | Bacteroidia | Cytophagales | Spirosomaceae | Lacihabitans |
-| 102 | Bacteria | Cyanobacteria | Cyanobacteriia | Synechococcales | Cyanobiaceae | Cyanobium | PCC-6307 |
-| 103 | Bacteria | Bdellovibrionota | Oligoflexia | Silvanigrellales | Silvanigrellaceae | NA |
-| 104 | Bacteria | Proteobacteria | Alphaproteobacteria | Rickettsiales | Rickettsiaceae | Candidatus | Megaira |
-| 105 | Bacteria | Bacteroidota | Bacteroidia | Chitinophagales | Chitinophagaceae | Sediminibacterium |
-| 106 | Bacteria | Proteobacteria | Alphaproteobacteria | Rickettsiales | Mitochondria | NA |
-| 107 | Bacteria | Cyanobacteria | Cyanobacteriia | Pseudanabaenales | Pseudanabaenaceae | Pseudanabaena | PCC-7429 |
-| 108 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Chitinibacteraceae | Deefgea |
-| 109 | Bacteria | Bacteroidota | Bacteroidia | Chitinophagales | Chitinophagaceae | Sediminibacterium |
-| 110 | Bacteria | Proteobacteria | Alphaproteobacteria | Elsterales | Elsteraceae | Lacibacterium |
-| 111 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Chitinibacteraceae | Deefgea |
-| 112 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Beijerinckiaceae | FukuN57 |
-| 113 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Caulobacteraceae | Caulobacter |
-| 114 | Bacteria | Bacteroidota | Bacteroidia | NA | NA | NA |
-| 115 | Bacteria | Bacteroidota | Bacteroidia | Sphingobacteriales | LiUU-11-161 | NA |
-| 116 | Bacteria | Proteobacteria | Alphaproteobacteria | NA | NA | NA |
-| 117 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Microcystaceae | Microcystis | PCC-7914 |
-| 118 | Bacteria | Bacteroidota | Bacteroidia | Cytophagales | NA | NA
+| 1958 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
+| 1763 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
+| 1590 | Bacteria | Proteobacteria | Alphaproteobacteria | Sphingomonadales | Sphingomonadaceae | Sphingorhabdus |
+| 1328 | Bacteria | Proteobacteria | Alphaproteobacteria | Sphingomonadales | Sphingomonadaceae | Sphingorhabdus |
+| 943 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
+| 854 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
+| 391 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Rhodoferax |
+| 362 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Rhodoferax |
+| 359 | Bacteria | Proteobacteria | Gammaproteobacteria | Enterobacterales | Aeromonadaceae | Aeromonas |
+| 336 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Rhodoferax |
+| 335 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
+| 330 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Rhodoferax |
+| 300 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
+| 296 | Bacteria | Proteobacteria | Alphaproteobacteria | Elsterales | Elsteraceae | NA |
+| 272 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Rhodoferax |
+| 267 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Hyphomonadaceae | UKL13-1 |
+| 261 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Rhodoferax |
+| 257 | Bacteria | Proteobacteria | Alphaproteobacteria | Elsterales | Elsteraceae | NA |
+| 237 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | NA |
+| 236 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Hyphomonadaceae | UKL13-1 |
+| 225 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
+| 210 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
+| 207 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
+| 206 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhodospirillales | Rhodospirillaceae | Roseospirillum |
+| 197 | Bacteria | Proteobacteria | Alphaproteobacteria | NA | NA | NA |
+| 197 | Bacteria | Proteobacteria | Alphaproteobacteria | Elsterales | Elsteraceae | Elstera |
+| 196 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhodospirillales | Rhodospirillaceae | Roseospirillum |
+| 194 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | Aphanizomenon | NIES81 |
+| 186 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | NA |
+| 185 | Bacteria | Proteobacteria | Alphaproteobacteria | Elsterales | Elsteraceae | Elstera |
+| 176 | Bacteria | Proteobacteria | Alphaproteobacteria | NA | NA | NA |
+| 135 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Inhella |
+| 126 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Inhella |
+| 110 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Hydrogenophaga |
+| 100 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Pelomonas |
+| 94 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Hydrogenophaga |
+| 86 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Pelomonas |
+| 78 | Bacteria | Proteobacteria | Gammaproteobacteria | Enterobacterales | Alteromonadaceae | Rheinheimera |
+| 71 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | NA |
+| 63 | Bacteria | Proteobacteria | Gammaproteobacteria | Enterobacterales | Alteromonadaceae | Rheinheimera |
+| 62 | Bacteria | Bacteroidota | Bacteroidia | Cytophagales | Spirosomaceae | Flectobacillus |
+| 60 | Bacteria | Bacteroidota | Bacteroidia | Cytophagales | Spirosomaceae | Flectobacillus |
+| 52 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | NA |
+| 50 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
+| 43 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
+| 42 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Leptothrix |
+| 37 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Leptothrix |
+| 37 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
+| 34 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Beijerinckiaceae | Bosea |
+| 33 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Caulobacteraceae | Phenylobacterium |
+| 33 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Beijerinckiaceae | Bosea |
+| 32 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
+| 31 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiales | Incertae | Sedis | Phreatobacter |
+| 30 | Bacteria | Proteobacteria | Gammaproteobacteria | Enterobacterales | Alteromonadaceae | Rheinheimera |
+| 30 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiaceae | Allorhizobium-Neorhizobium-Pararhizobium-Rhizobium |
+| 25 | Bacteria | Proteobacteria | Gammaproteobacteria | Enterobacterales | Alteromonadaceae | Rheinheimera |
+| 24 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiales | Incertae | Sedis | Phreatobacter |
+| 24 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Caulobacteraceae | Phenylobacterium |
+| 23 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhodobacterales | Rhodobacteraceae | NA |
+| 23 | Bacteria | Proteobacteria | Alphaproteobacteria | Elsterales | Elsteraceae | NA |
+| 23 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiales | Incertae | Sedis | Phreatobacter |
+| 22 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
+| 22 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Hydrogenophaga |
+| 22 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Hydrogenophaga |
+| 21 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Comamonadaceae | Hydrogenophaga |
+| 20 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Chromobacteriaceae | Vogesella |
+| 20 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
+| 19 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhodobacterales | Rhodobacteraceae | NA |
+| 17 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiaceae | Allorhizobium-Neorhizobium-Pararhizobium-Rhizobium |
+| 17 | Bacteria | Bacteroidota | Kapabacteria | Kapabacteriales | NA | NA |
+| 17 | Bacteria | Bacteroidota | Bacteroidia | Cytophagales | Bernardetiaceae | Bernardetia |
+| 16 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Nostocaceae | NA |
+| 16 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiales | Incertae | Sedis | Phreatobacter |
+| 16 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
+| 15 | Bacteria | Proteobacteria | Alphaproteobacteria | Sphingomonadales | Sphingomonadaceae | Sphingorhabdus |
+| 15 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
+| 15 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
+| 15 | Bacteria | Bacteroidota | Kapabacteria | Kapabacteriales | NA | NA |
+| 15 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Caulobacteraceae | Brevundimonas |
+| 14 | Bacteria | Proteobacteria | Gammaproteobacteria | Enterobacterales | Aeromonadaceae | Aeromonas |
+| 13 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
+| 13 | Bacteria | Bdellovibrionota | Oligoflexia | Silvanigrellales | Silvanigrellaceae | NA |
+| 12 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Chitinimonadaceae | Chitinimonas |
+| 12 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Caulobacteraceae | Brevundimonas |
+| 12 | Bacteria | Proteobacteria | Alphaproteobacteria | SAR11 | clade | Clade | III | NA |
+| 11 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Rhodocyclaceae | NA |
+| 11 | Bacteria | Proteobacteria | Gammaproteobacteria | Pseudomonadales | Pseudomonadaceae | Pseudomonas |
+| 11 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Rhizobiales | Incertae | Sedis | Phreatobacter |
+| 10 | Bacteria | Firmicutes | Bacilli | Exiguobacterales | Exiguobacteraceae | Exiguobacterium |
+| 10 | Bacteria | Myxococcota | Polyangia | Polyangiales | Polyangiaceae | Pajaroellobacter |
+| 9 | Bacteria | Proteobacteria | Gammaproteobacteria | Pseudomonadales | Pseudomonadaceae | Pseudomonas |
+| 9 | Bacteria | Proteobacteria | Alphaproteobacteria | SAR11 | clade | Clade | III | NA |
+| 8 | Bacteria | Bacteroidota | Bacteroidia | Cytophagales | Bernardetiaceae | Bernardetia |
+| 8 | Bacteria | Bacteroidota | Bacteroidia | Flavobacteriales | Flavobacteriaceae | Flavobacterium |
+| 8 | Bacteria | Proteobacteria | Gammaproteobacteria | Pseudomonadales | Cellvibrionaceae | Cellvibrio |
+| 7 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Chitinimonadaceae | Chitinimonas |
+| 7 | Bacteria | Deinococcota | Deinococci | Deinococcales | Deinococcaceae | Deinococcus |
+| 6 | Bacteria | Cyanobacteria | Cyanobacteriia | Pseudanabaenales | Pseudanabaenaceae | Pseudanabaena | PCC-7429 |
+| 6 | Bacteria | Bacteroidota | Bacteroidia | Chitinophagales | Chitinophagaceae | Ferruginibacter |
+| 6 | Bacteria | Myxococcota | Polyangia | Blfdi19 | NA | NA |
+| 6 | Bacteria | Bacteroidota | Bacteroidia | Cytophagales | Spirosomaceae | Lacihabitans |
+| 6 | Bacteria | Cyanobacteria | Cyanobacteriia | Synechococcales | Cyanobiaceae | Cyanobium | PCC-6307 |
+| 5 | Bacteria | Bdellovibrionota | Oligoflexia | Silvanigrellales | Silvanigrellaceae | NA |
+| 5 | Bacteria | Proteobacteria | Alphaproteobacteria | Rickettsiales | Rickettsiaceae | Candidatus | Megaira |
+| 5 | Bacteria | Bacteroidota | Bacteroidia | Chitinophagales | Chitinophagaceae | Sediminibacterium |
+| 5 | Bacteria | Proteobacteria | Alphaproteobacteria | Rickettsiales | Mitochondria | NA |
+| 5 | Bacteria | Cyanobacteria | Cyanobacteriia | Pseudanabaenales | Pseudanabaenaceae | Pseudanabaena | PCC-7429 |
+| 5 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Chitinibacteraceae | Deefgea |
+| 4 | Bacteria | Bacteroidota | Bacteroidia | Chitinophagales | Chitinophagaceae | Sediminibacterium |
+| 4 | Bacteria | Proteobacteria | Alphaproteobacteria | Elsterales | Elsteraceae | Lacibacterium |
+| 4 | Bacteria | Proteobacteria | Gammaproteobacteria | Burkholderiales | Chitinibacteraceae | Deefgea |
+| 4 | Bacteria | Proteobacteria | Alphaproteobacteria | Rhizobiales | Beijerinckiaceae | FukuN57 |
+| 3 | Bacteria | Proteobacteria | Alphaproteobacteria | Caulobacterales | Caulobacteraceae | Caulobacter |
+| 3 | Bacteria | Bacteroidota | Bacteroidia | NA | NA | NA |
+| 2 | Bacteria | Bacteroidota | Bacteroidia | Sphingobacteriales | LiUU-11-161 | NA |
+| 2 | Bacteria | Proteobacteria | Alphaproteobacteria | NA | NA | NA |
+| 2 | Bacteria | Cyanobacteria | Cyanobacteriia | Cyanobacteriales | Microcystaceae | Microcystis | PCC-7914 |
+| 2 | Bacteria | Bacteroidota | Bacteroidia | Cytophagales | NA | NA
