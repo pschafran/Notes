@@ -33,7 +33,7 @@ fastp --in1 R1.fastq --in2 R2.fastq --out1 fastp_output_R1.fastq --out2 fastp_ou
 ```
 After fastp, look at report in fastp.html. Can also evaluate output fastq file with FastQC.
 
-### Two alternative assembly methods
+### Three alternative assembly methods
 #### NOVOPlasty
 NOVOPlasty assemblies organelle genomes directly from total genomic data. Usually it's pretty good if you have sufficient coverage.
 1. Install
@@ -111,29 +111,36 @@ spades.py -t 8 -1 chloroplast_reads_R1.fastq -2 chloroplast_reads_R2.fastq -o sp
 4. Check spades assembly. Contig names will contain length and coverage information.
 ```
 grep ">" spades/scaffolds.fasta
->NODE01_len_83209_cov_503.2035
-$
-$ >N
-$ >
-$ >
-$ >
-$ >
-$ >
+$ >NODE_1_length_83701_cov_65.750942
+$ >NODE_2_length_26125_cov_167.677591
+$ >NODE_3_length_16994_cov_54.857777
+$ >NODE_4_length_869_cov_5.803235
+$ >NODE_5_length_654_cov_6.337761
+$ >NODE_6_length_555_cov_8.434579
+$ >NODE_7_length_514_cov_4.764858
+$ >NODE_8_length_500_cov_6.713137
 .
 .
 .
 ```
 Ideally 3 contigs will be assembled (large subunit, inverted repeat, small subunit). Usually there will be many short contigs (<1000 bp) that can be discarded. There should be order of magnitude or greater difference between good chloroplast contigs and spurious ones (and inverted repeat contig should have ~2x coverage of the LSC/SSC).
 
+#### Whole Genome Assembly
+Though unlikely, if NOVOPlasty fails to assemble large parts of the plastome and there is no close reference, you can assemble the total dataset. Depending on the size of the dataset, this may not be possible on most consumer grade computers (need upgraded machine or server). Using a metagenomic assembler can help (because organelles are present at much different abundance than nuclear genome). metaSPAdes (a metagenome-tailored version of SPAdes) is one I like, but there are many others. WARNING: This process can take a very long time (multiple days on my machine w/ 16 cores and 128GB memory).
+```
+spades.py --meta -t 8 -1 fastp_output_R1.fastq -2 fastp_output_R2.fastq -o spades_meta
+```
+Again, hopefully the first few contigs in scaffolds.fasta will be longer and higher coverage than everything else.
+
+
 ### Step 4.
 If assemblies look reasonable, create preliminary annotations of NOVOPlasty and spades results. Upload files to [GeSeq](https://chlorobox.mpimp-golm.mpg.de/geseq.html). Select linear sequences unless using NOVOPlasty `Circularized_assembly_...fasta`. Add any NCBI RefSeqs that are fairly close (e.g. same family). Check box to include MPI-MP chloroplast (land plant) references. Leave other options on default. After jobs are complete, download GenBank file and open in Geneious. Load read files too.
 
 ### Step 5.
-Try to find correct orientation of your contigs to stitch into a draft. Align contigs to reference plastome. Depending on similar the reference is to the sample, this may take some trial and error with different Geneious settings and plugins (minimap2, Mauve, LASTZ). It is possible that there have been rearrangements. Can also use annotations to guide piecing contigs together.  
+Try to find correct orientation of your contigs to stitch into a draft. Align contigs to reference plastome. Depending on similar the reference is to the sample, this may take some trial and error with different Geneious settings and plugins (minimap2, Mauve, LASTZ). It is possible that there have been rearrangements. Can also use annotations to guide piecing contigs together.
 
 
 
 
 
 ## Troubleshooting
-1. Many contigs
