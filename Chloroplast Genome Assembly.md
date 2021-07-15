@@ -10,6 +10,8 @@
 * Structure and gene content mostly conserved among land plants, occasional inversions, expansions of inverted repeat regions
 
 <img src="images/Agrostemma_fusciculata_MUR5_OGDRAW.jpg">
+
+  
 ## How to sequence a chloroplast genome
 * Genome skimming takes advantage of higher abundance of organelles compared to nuclear genome
 * Randomly (shotgun) sequencing 5-10 Gbp of genomic DNA usually yields enough chloroplast data for a good assembly
