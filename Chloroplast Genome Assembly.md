@@ -9,6 +9,7 @@
 * Most plants have roughly 50:50 ratio of two isoforms of the plastome, with SSC in both directions in relation to other units (LSC-IRA-SSC-IRB and LSC-IRA-rSSC-IRB)
 * Structure and gene content mostly conserved among land plants, occasional inversions, expansions of inverted repeat regions
 
+<img src="images/Agrostemma_fusciculata_MUR5_OGDRAW.jpg">
 ## How to sequence a chloroplast genome
 * Genome skimming takes advantage of higher abundance of organelles compared to nuclear genome
 * Randomly (shotgun) sequencing 5-10 Gbp of genomic DNA usually yields enough chloroplast data for a good assembly
@@ -34,6 +35,10 @@ fastp --in1 R1.fastq --in2 R2.fastq --out1 fastp_output_R1.fastq --out2 fastp_ou
 After fastp, look at report in fastp.html. Can also evaluate output fastq file with FastQC.
 
 ### Three alternative assembly methods
+Download some references:
+```
+git clone https://github.com/pschafran/Suman-plastomes.git
+```
 #### NOVOPlasty
 NOVOPlasty assemblies organelle genomes directly from total genomic data. Usually it's pretty good if you have sufficient coverage.
 1. Install
