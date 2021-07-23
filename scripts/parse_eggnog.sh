@@ -2,7 +2,7 @@
 #
 # Peter W. Schafran ps997@cornell.edu
 #
-# Usage: parse_eggnog.sh QUERY_SEQ_NAME [ EGGNOG_COLUMNS ]
+# Usage: parse_eggnog.sh QUERY_SEQ_NAME[.txt] EGGNOG_COLUMN1 EGGNOG_COLUMN2...EGGNOG_COLUMNn
 #
 # Accepted EGGNOG_COLUMNS:
 # SEED_ORTHOLOG, SEED_EVALUE, SEED_SCORE, BEST_TAX_LEVEL, PREFERRED_NAME, GO,
@@ -13,8 +13,15 @@
 QUERY=$1
 PARAMS=()
 
+# Determine input is file or string
+if [ -f $1 ]
+  then GREP_TYPE="-f"
+else
+  GREP_TYPE="-w"
+fi
+
 if [ $2 = "ALL" ]
-  then grep -w $QUERY /home/ps997/HornwortBase_20210503/Hornworts.emapper.annotations
+  then grep $GREP_TYPE $QUERY /home/ps997/HornwortBase_20210503/Hornworts.emapper.annotations
 else
   # Convert text command line args to corresponding column number in eggnog file
   for i in "${@:2}"
@@ -74,5 +81,5 @@ else
     DELIM=","
   done
 
-  grep -w $QUERY /home/ps997/HornwortBase_20210503/Hornworts.emapper.annotations | cut -f $FIELDS
+  grep $GREP_TYPE $QUERY /home/ps997/HornwortBase_20210503/Hornworts.emapper.annotations | cut -f 1,"$FIELDS"
 fi
