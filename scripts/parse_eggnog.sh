@@ -21,7 +21,7 @@ else
 fi
 
 if [ $2 = "ALL" ]
-  then grep $GREP_TYPE $QUERY /home/ps997/HornwortBase_20210503/Hornworts.emapper.annotations
+  then grep -F $GREP_TYPE "$QUERY" /home/ps997/HornwortBase_20210503/Hornworts.emapper.annotations
 else
   # Convert text command line args to corresponding column number in eggnog file
   for i in "${@:2}"
@@ -81,5 +81,5 @@ else
     DELIM=","
   done
 
-  grep $GREP_TYPE $QUERY /home/ps997/HornwortBase_20210503/Hornworts.emapper.annotations | cut -f 1,"$FIELDS"
+  grep -F $GREP_TYPE "$QUERY" /home/ps997/HornwortBase_20210503/Hornworts.emapper.annotations | cut -f 1,"$FIELDS"
 fi
