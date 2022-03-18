@@ -319,7 +319,7 @@ N100 = 1, n = 3743030
 convertFastqToFasta.py taughannock_HAB_all_porechop.fastq
 
 # Extract read names
-grep ">" > taughannock_HAB_all_porechop.readNames.txt
+grep ">" taughannock_HAB_all_porechop.fasta > taughannock_HAB_all_porechop.readNames.txt
 awk -F" " '{print $1}' taughannock_HAB_all_porechop.readNames.txt > taughannock_HAB_all_porechop.readNames2.txt
 
 # Check number of read names is still the same
