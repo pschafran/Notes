@@ -21,6 +21,13 @@ https://docs.google.com/document/d/1fhJvkneJ1Sq6AG-8kO-c0mkeYF0cZUZjH2dXriRvhD8/
 4. Assign taxonomy to contigs using Centrifuge, Kraken2, Kaiju, BLASTn, and BLASTx
 5. Assign taxonomy to reads with programs that can handle it (i.e. not BLAST)
 6. Cross-compare taxonomic annotations between programs
+7. Extract rDNA sequences and compare taxonomy
+8. Subset data to mimic Flongle flow cell, see if output looks usable for characterizing blooms
+9. Try to better assemble individual genomes using Bandage as a guide
+10. Do gene prediction and functional annotation
+11. 16S and 23S phylogenies
+12. Illumina shotgun sequencing -- examine how data fits to ONT assembly
+13. 16S metabarcoding
 
 ------------------
 
