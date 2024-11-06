@@ -67,12 +67,31 @@ pih.standard.ll <- 40000  # YL1-H lower limit of peak (if unsure, use same as pi
 pih.standard.ul <- 60000  # YL1-H upper limit of peak (if unsure, use same as pia.ul)
 median(fcm$`YL1-A`[fcm$`YL1-A` >= pia.standard.ll & fcm$`YL1-A` <= pia.standard.ul & fcm$`YL1-H` >= pih.standard.ll & fcm$`YL1-H` <= pih.standard.ul])
 
-pia.sample.ll <- 140000  # YL1-A lower limit of peak
+pia.sample.ll <- 130000  # YL1-A lower limit of peak
 pia.sample.ul <- 160000 # YL1-A upper limit of peak
-pih.sample.ll <- 120000  # YL1-H lower limit of peak (if unsure, use same as pia.ll)
+pih.sample.ll <- 110000  # YL1-H lower limit of peak (if unsure, use same as pia.ll)
 pih.sample.ul <- 150000  # YL1-H upper limit of peak (if unsure, use same as pia.ul)
 median(fcm$`YL1-A`[fcm$`YL1-A` >= pia.sample.ll & fcm$`YL1-A` <= pia.sample.ul & fcm$`YL1-H` >= pih.sample.ll & fcm$`YL1-H` <= pih.sample.ul])
 
+# Check peak boundaries visually
+ggplot(fcm, aes(x=fcm$`YL1-A`, y=fcm$`YL1-H`) ) +
+  geom_bin2d(bins = 100) +
+  #scale_fill_gradient(low = "white", high = "black") +
+  scale_fill_continuous(type = "viridis", trans = "log") +
+  scale_x_continuous(breaks = scales::pretty_breaks(n=10)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n=10)) +
+  geom_segment(aes(x = pia.sample.ll, y = pih.sample.ll, xend = pia.sample.ul, yend = pih.sample.ll), linetype="dashed", alpha = 0.5, color = "red") +
+  geom_segment(aes(x = pia.sample.ll, y = pih.sample.ll, xend = pia.sample.ll, yend = pih.sample.ul), linetype="dashed", alpha = 0.5, color = "red") +
+  geom_segment(aes(x = pia.sample.ul, y = pih.sample.ll, xend = pia.sample.ul, yend = pih.sample.ul), linetype="dashed", alpha = 0.5, color = "red") +
+  geom_segment(aes(x = pia.sample.ll, y = pih.sample.ul, xend = pia.sample.ul, yend = pih.sample.ul), linetype="dashed", alpha = 0.5, color = "red") +
+  geom_segment(aes(x = pia.standard.ll, y = pih.standard.ll, xend = pia.standard.ul, yend = pih.standard.ll), linetype="dashed", alpha = 0.5, color = "red") +
+  geom_segment(aes(x = pia.standard.ll, y = pih.standard.ll, xend = pia.standard.ll, yend = pih.standard.ul), linetype="dashed", alpha = 0.5, color = "red") +
+  geom_segment(aes(x = pia.standard.ul, y = pih.standard.ll, xend = pia.standard.ul, yend = pih.standard.ul), linetype="dashed", alpha = 0.5, color = "red") +
+  geom_segment(aes(x = pia.standard.ll, y = pih.standard.ul, xend = pia.standard.ul, yend = pih.standard.ul), linetype="dashed", alpha = 0.5, color = "red") +
+  xlab("YL1-A") +
+  ylab("YL1-H") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 
 # Count number of nuclei in the target range
