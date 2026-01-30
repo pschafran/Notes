@@ -6,7 +6,7 @@
 
 ## Summary
 
-Completed BUSCO analysis on all `--missing ingroup` FASTA files (26 runs) and performed comprehensive comparison between the two alien index parameter settings (`--missing outgroup` vs `--missing ingroup`). Results demonstrate that `--missing ingroup` produces significantly better plant transcriptome quality and cleaner contamination/HGT candidate sets.
+Completed BUSCO analysis on all `--missing ingroup` FASTA files (26 runs) and performed comprehensive comparison between the two alien index parameter settings (`--missing outgroup` vs `--missing ingroup`). Results demonstrate that `--missing ingroup` produces significantly better plant transcriptome quality and cleaner contamination/HGT candidate sets. Also renamed all sequences in final FASTA files with species/sample identifiers for cross-sample uniqueness.
 
 ## Work Completed
 
@@ -20,6 +20,34 @@ Completed BUSCO analysis on all `--missing ingroup` FASTA files (26 runs) and pe
 For each of 13 samples:
 - `busco_negative_ai_missing_ingroup/` - BUSCO results for negative AI sequences
 - `busco_positive_ai_missing_ingroup/` - BUSCO results for positive AI sequences
+- `transcripts.fasta.transdecoder.pep.negative_ai.missing_ingroup.renamed.fasta` - Renamed sequences
+- `transcripts.fasta.transdecoder.pep.positive_ai.missing_ingroup.renamed.fasta` - Renamed sequences
+
+### Sequence Renaming
+Renamed all sequences in final `--missing ingroup` FASTA files with species/sample identifiers.
+
+**Naming scheme:** 2-letter genus + 3-letter species + sample ID (e.g., `>Fofuc_A017|NODE_10000...`)
+
+| Code | Full Species Name | Sample ID |
+|------|-------------------|-----------|
+| Anspe | Anthoceros sp | A012 |
+| Dejav | Dendroceros javanicus | A016 |
+| Fofuc | Folioceros fuciformis | A017 |
+| Fokas | Folioceros kashyapii | A008 |
+| Ledus | Leiosporoceros dussii | ANON |
+| Noaen | Nothoceros aenigmaticus | DXOU |
+| Novin | Nothoceros vincentianus | TCBC |
+| Ntjav | Notothylas javanica | A002 |
+| Ntorb | Notothylas orbicularis | A011 |
+| Pahal | Paraphymatoceros hallii | FAJB |
+| Phcar | Phaeoceros carolinianus | A001 |
+| Pmcor | Phaeomegaceros coriaceus | AKXB |
+| Pybul | Phymatoceros bulbiculosus | A014 |
+
+**Total sequences renamed:**
+- Negative AI: 379,752 sequences across 13 samples
+- Positive AI: 77,153 sequences across 13 samples
+- All sequence names verified unique across all samples
 
 ## Results
 
@@ -135,14 +163,34 @@ busco -m prot -l viridiplantae_odb12 -c 32 \
 busco -m prot -l viridiplantae_odb12 -c 32 \
   -i transcripts.fasta.transdecoder.pep.positive_ai.missing_ingroup.fasta \
   -o busco_positive_ai_missing_ingroup --offline
+
+# Sequence renaming (for each sample)
+sed "s/^>/>Fofuc_A017|/" input.fasta > output.renamed.fasta
 ```
+
+## Discussion: Protein Set Improvement Methods
+
+Discussed potential methods to further improve transcriptome-derived protein sets:
+
+1. **Redundancy reduction** - CD-HIT/MMseqs2 clustering at 95% identity
+2. **ORF quality filtering** - Keep complete ORFs, minimum length, coding potential scores
+3. **Expression-based filtering** - Remove low-expressed transcripts
+4. **Isoform selection** - Longest ORF or highest-expressed per gene
+5. **Functional annotation filtering** - Keep sequences with Pfam domains or SwissProt hits
+6. **Homology-based validation** - OrthoFinder for cross-species ortholog detection
+7. **Assembly improvement** - Long-read data, error correction
+
+Not implemented this session - reserved for future work.
 
 ## Next Steps
 
+- [x] ~~Rename sequences with species/sample identifiers~~ (completed)
 - [ ] Analyze which sequences differ between the two parameter settings
 - [ ] Investigate Phymatoceros_bulbiculosus positive AI sequences (19.2% BUSCO - potential HGT)
 - [ ] Characterize the positive AI sequences taxonomically (what organisms?)
 - [ ] Consider re-running samples with low BUSCO (Nothoceros_aenigmaticus, Folioceros_kashyapii)
+- [ ] Redundancy reduction with CD-HIT
+- [ ] Ortholog detection with OrthoFinder
 
 ## Related Files
 
