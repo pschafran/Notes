@@ -4,7 +4,7 @@
 **Location:** `/media/data/projects/iva_phylogeny/analysis`
 
 ## Summary
-Analyzed GetOrganelle chloroplast and nuclear ribosomal DNA assemblies from 12 *Iva* samples. Classified chloroplast genomes by rbcL/ndhD orientation, reverse-complemented sample 58 to correct LSC inversion, then performed nrDNA alignment and phylogenetic analysis revealing unexpected long branch in sample 49.
+Analyzed GetOrganelle chloroplast and nuclear ribosomal DNA assemblies from 12 *Iva* samples. Classified chloroplast genomes by rbcL/ndhD orientation, reverse-complemented sample 58 to correct LSC inversion, performed nrDNA alignment and phylogenetic analysis, and annotated rRNA genes using barrnap with ITS2 length validated against NCBI reference sequences.
 
 ## Work Completed
 
@@ -13,6 +13,9 @@ Analyzed GetOrganelle chloroplast and nuclear ribosomal DNA assemblies from 12 *
 - `nrDNA_aligned.fasta` - MAFFT alignment with auto-reorientation (13,922 positions)
 - `nrDNA_aligned_trimmed.fasta` - End-trimmed alignment (6,893 positions)
 - `nrDNA_tree.*` - IQ-TREE output files (treefile, contree, iqtree, splits.nex, log, model.gz, mldist)
+- `nrDNA_barrnap.gff` - Raw barrnap rRNA annotation
+- `nrDNA_barrnap.log` - Barrnap log output
+- `nrDNA_barrnap_corrected.gff` - Corrected GFF with proper ITS1/ITS2 boundaries
 - `frutescens/58_STURM_251201adq30ft/embplant_pt/embplant_pt.K115.complete.graph1.1.path_sequence.revcomp.fasta`
 - `frutescens/58_STURM_251201adq30ft/embplant_pt/embplant_pt.K115.complete.graph1.2.path_sequence.revcomp.fasta`
 
@@ -31,6 +34,12 @@ mafft --auto --adjustdirection --thread -1 nrDNA_combined.fasta > nrDNA_aligned.
 
 # Build phylogenetic tree
 iqtree -s nrDNA_aligned_trimmed.fasta -m MFP -bb 1000 -nt AUTO -pre nrDNA_tree
+
+# Annotate rRNA genes with barrnap
+barrnap --kingdom euk nrDNA_combined.fasta > nrDNA_barrnap.gff 2> nrDNA_barrnap.log
+
+# Search NCBI for Iva ITS2 reference sequences
+blastn -query iva_its2_query.fasta -db nt -remote -entrez_query "Iva[Organism]" -outfmt "6 sacc stitle length pident evalue"
 ```
 
 ## Key Decisions & Rationale
@@ -42,6 +51,8 @@ iqtree -s nrDNA_aligned_trimmed.fasta -m MFP -bb 1000 -nt AUTO -pre nrDNA_tree
   - **Rationale:** Removes overhanging regions from length variation while preserving internal gaps
 - **Decision:** Used graph1.1 as representative for samples with multiple nrDNA sequences
   - **Rationale:** Samples 86 (4 seqs) and 91 (2 seqs) have intragenomic variation; graph1.1 is consistent choice
+- **Decision:** Corrected barrnap GFF to fix 28S/5.8S overlap and add ITS2 boundaries
+  - **Rationale:** Barrnap's 28S HMM extends ~160 bp into 5.8S region; validated ITS2 length (250 bp) against NCBI reference MG219277
 
 ## Technical Details
 
@@ -86,6 +97,33 @@ Sample 58 has Forward rbcL (LSC inversion), confirmed from previous session. Rev
   - Most frutescens form tight cluster (BS=99)
   - 49_frutescens has extremely long branch (0.11 subs/site)
 
+### Barrnap rRNA Annotation
+All 12 samples annotated with 18S, 5.8S, and 28S rRNA genes.
+
+| Region | Length | Notes |
+|--------|--------|-------|
+| 18S | 1808-1809 bp | Consistent across samples |
+| ITS1 | 259-270 bp | Sample 49 slightly shorter (259 bp) |
+| 5.8S | 154 bp | Consistent across samples |
+| ITS2 | 250 bp | Validated against NCBI ref MG219277 |
+| 28S | ~3600 bp | After correcting barrnap overlap |
+
+**Barrnap corrections applied:**
+- Original 28S annotation overlapped 5.8S by ~160 bp (HMM artifact)
+- Corrected 28S boundaries to exclude overlap
+- Added 250 bp ITS2 gap based on NCBI reference
+
+### NCBI BLAST Results for ITS2
+Query: 250 bp ITS2 region from 37_frutescens
+
+| Accession | Species | Identity | E-value |
+|-----------|---------|----------|---------|
+| MG219277 | *I. frutescens* | 100% | 6e-133 |
+| MG219253 | *I. frutescens* | 100% | 6e-133 |
+| MH984881 | *I. microcephala* | 99.2% | 5e-129 |
+| MH984882 | *I. angustifolia* | 98.0% | 4e-125 |
+| MH984880 | *I. imbricata* | 97.2% | 3e-121 |
+
 ## Challenges & Solutions
 **Problem:** Sample 58 chloroplast has inverted LSC region affecting rbcL orientation
 **Solution:** Reverse-complemented entire sequences using seqtk; verified orientations now match other samples
@@ -106,7 +144,8 @@ Sample 58 has Forward rbcL (LSC inversion), confirmed from previous session. Rev
 ## Related Files
 - Previous session: `/home/peter/Notes/claude-sessions/2026-01-30_iva-frutescens-chloroplast.md`
 - Reference proteins: `rbcL.faa`, `ndhD.faa`
+- NCBI ITS2 reference: MG219277 (*Iva frutescens*, 350 bp, ITS2 complete)
 - GetOrganelle environment: `/home/peter/miniconda3/envs/getorganelle`
 
 ## Tags
-`#nrDNA` `#ITS` `#phylogenetics` `#getorganelle` `#iva` `#mafft` `#iqtree` `#chloroplast`
+`#nrDNA` `#ITS` `#phylogenetics` `#getorganelle` `#iva` `#mafft` `#iqtree` `#chloroplast` `#barrnap` `#ncbi-blast`
