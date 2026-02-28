@@ -6,7 +6,9 @@
 
 ## Summary
 
-Completed the repeat + gene landscape analysis for the male genome (LedusM) and generated a five-panel male vs. female comparison figure with emphasis on sex chromosome differentiation. The key finding is that the female V chromosome (S3) and male U chromosome (S5) have dramatically different repeat landscapes despite both being gene-poor, consistent with different stages of sex chromosome degeneration.
+Completed the repeat + gene landscape analysis for the male genome (LedusM) and generated a five-panel male vs. female comparison figure with emphasis on sex chromosome differentiation. The key finding is that the female U chromosome (S3) and male V chromosome (S5) have dramatically different repeat landscapes despite both being gene-poor, consistent with different stages of sex chromosome degeneration.
+
+**Terminology note:** In bryophytes, U = female sex chromosome, V = male sex chromosome (opposite of the intuitive X/Y or Z/W analogy). LedusF S3 = U chromosome; LedusM S5 = V chromosome.
 
 ## Work Completed
 
@@ -35,12 +37,12 @@ The previous session had completed all female figures and written the male analy
 
 ### Female genome (LedusF / JC2)
 - 140.4 Mb, 5 scaffolds + contigs
-- **S3 = V chromosome** (22.0 Mb): 98.8% repeat, 252 genes (11.4/Mb), dominated by Unknown satellite TE_00000009 (~380 bp, 35,868 copies, ~80% of S3)
+- **S3 = U chromosome** (22.0 Mb): 98.8% repeat, 252 genes (11.4/Mb), dominated by Unknown satellite TE_00000009 (~380 bp, 35,868 copies, ~80% of S3)
 - Autosomes: 49–56% repeat, 113–137 genes/Mb, LTR-dominated
 
 ### Male genome (LedusM / H23)
 - 121.0 Mb, 5 scaffolds + contigs
-- **S5 = U chromosome** (5.3 Mb): 86.5% repeat, 234 genes (44.2/Mb), LTR-dominated (67.4% LTR)
+- **S5 = V chromosome** (5.3 Mb): 86.5% repeat, 234 genes (44.2/Mb), LTR-dominated (67.4% LTR)
 - Autosomes: 49–56% repeat, 113.6–125.1 genes/Mb, LTR-dominated
 - New TE class vs. female: `TIR/Tc1_Mariner` (mapped to DNA major class)
 
@@ -102,6 +104,35 @@ Scripts saved to: `~/Notes/claude-scripts/2026-02-27_leiosporoceros-sex-chromoso
 - `plot_repeats_male.py`
 - `plot_genome_landscape_male.py`
 - `plot_sex_chromosome_comparison.py`
+
+---
+
+## Session continuation — Sex Chromosome Synteny Plot
+
+### Summary
+Built a synteny visualisation comparing gene layout between the U (LedusF.S3) and V (LedusM.S5) sex chromosomes using Bezier arcs between RBH gene pairs coloured by Ks. Reveals 13 surviving gene pairs, all highly diverged (Ks 0.01–4.28 vs. autosomal median 0.004), with scrambled gene order between the two sex chromosomes.
+
+### Files Created
+- `sex_chromosome_analyses/plot_sex_chromosome_synteny.py` — synteny plot script
+- `sex_chromosome_analyses/rbh_ks/LedusF_LedusM_sex_chromosome_synteny.pdf/png` — figure
+- `sex_chromosome_analyses/rbh_ks/LedusF_LedusM_sex_chromosome_synteny.caption.txt` — figure caption
+
+### Key findings
+- **13 U↔V RBH pairs** (flag=ok); Ks range 0.01–4.28, far above autosomal median (0.004)
+- **8 U genes** with RBH to male autosomes (no V counterpart)
+- **8 V genes** with RBH to female autosomes (no U counterpart)
+- Gene order is scrambled — no syntenic collinearity detectable between U and V
+
+### Design decisions
+- Chromosome bars: plain grey rectangles (no colour, no arrowheads) — arrowheads were misleading
+- Ks colormap: blue→light-blue→orange→red (`#2c7bb6→#abd9e9→#fdae61→#d7191c`) — must start from a visible colour, not near-white
+- Bezier control points at 60% of the inter-bar gap for smooth S-curves
+- Background gene ticks `#cccccc`; autosomal-partner ticks `#888888`; UV-pair ticks coloured by Ks
+
+### Reusable methodology
+Full methodology saved to project memory: `MEMORY_synteny_plot.md`
+
+---
 
 ## Next Steps
 - [ ] Investigate the Unknown satellite (TE_00000009) on the female V chromosome in more detail — is it present on any other scaffolds? What is its structure?
