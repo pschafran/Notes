@@ -545,7 +545,8 @@ for glabel, scaffolds, methyl_file, gff_file, gtf_file in [
               f'{(~sub_g & ~sub_r).sum()/n*100:>10.1f}%  {sub_g.sum()/n*100:>9.1f}%  '
               f'{sub_r.sum()/n*100:>9.1f}%  {(sub_g & sub_r).sum()/n*100:>11.1f}%')
         ctx_data[cat] = context_fracs(mask, all_gene, all_rep)
-    ctx_results[glabel] = {'cov_data': cov_data, 'ctx_data': ctx_data}
+    pct_data = {cat: all_pct[all_cats == cat] for cat in CATS}
+    ctx_results[glabel] = {'cov_data': cov_data, 'ctx_data': ctx_data, 'pct_data': pct_data}
 
 # ══════════════════════════════════════════════════════════════════════════════
 # FIGURE 1 — Three-panel Miami + landscape
@@ -775,25 +776,26 @@ for col, glabel in enumerate(['Female (PhphyF)', 'Male (PhphyM)']):
 fig3.text(0.5, 0.975, 'A  Coverage by methylation category',
           ha='center', va='top', fontsize=10, fontweight='bold')
 
+all_handles_dict = {}  # label → patch; accumulated across both panels
 for col, glabel in enumerate(['Female (PhphyF)', 'Male (PhphyM)']):
     ax = fig3.add_subplot(gs_ctx[col])
     res = ctx_results[glabel]
-    x = np.arange(len(CATS)); bottoms = np.zeros(len(CATS)); handles = []
+    x = np.arange(len(CATS)); bottoms = np.zeros(len(CATS))
     for key, disp in zip(ctx_stack_order, ctx_stack_labels):
         heights = np.array([res['ctx_data'].get(cat, {}).get(key, 0.0)*100 for cat in CATS])
         color   = CTX_COLORS.get(key, '#cccccc')
         ax.bar(x, heights, bottom=bottoms, color=color, width=0.55, linewidth=0)
         bottoms += heights
-        if any(h > 0.5 for h in heights):
-            handles.append(mpatches.Patch(color=color, label=disp, linewidth=0))
+        if any(h > 0.5 for h in heights) and disp not in all_handles_dict:
+            all_handles_dict[disp] = mpatches.Patch(color=color, label=disp, linewidth=0)
     ax.set_xticks(x); ax.set_xticklabels([c.capitalize() for c in CATS], fontsize=8)
     ax.set_ylabel('% of sites', fontsize=8); ax.set_ylim(0,100)
     ax.set_title(glabel, fontsize=9, pad=6)
     ax.spines['top'].set_visible(False); ax.spines['right'].set_visible(False)
-    if col == 1:
-        ax.legend(handles=handles[::-1], fontsize=6, loc='upper left',
-                  bbox_to_anchor=(1.02, 1.0), frameon=False,
-                  handlelength=0.9, handletextpad=0.4, labelspacing=0.35)
+# legend on male axes (ax = last iteration), covering both panels' categories
+ax.legend(handles=list(all_handles_dict.values())[::-1], fontsize=6, loc='upper left',
+          bbox_to_anchor=(1.02, 1.0), frameon=False,
+          handlelength=0.9, handletextpad=0.4, labelspacing=0.35)
 
 fig3.text(0.5, 0.495, 'B  Genomic context by methylation category',
           ha='center', va='top', fontsize=10, fontweight='bold')
@@ -803,5 +805,111 @@ fig3.savefig(f'{ctx_out}.pdf', dpi=300, bbox_inches='tight', facecolor='white')
 fig3.savefig(f'{ctx_out}.png', dpi=150, bbox_inches='tight', facecolor='white')
 print(f'  Saved {ctx_out}.pdf/png')
 plt.close(fig3)
+
+# ══════════════════════════════════════════════════════════════════════════════
+# STATS — Save context/coverage statistics to text file
+# ══════════════════════════════════════════════════════════════════════════════
+import datetime
+print('\nSaving statistics...')
+
+def _rep_key(maj):
+    return 'gene+' + maj
+
+_genome_labels = ['Female (PhphyF)', 'Male (PhphyM)']
+stats_path = 'PhphyF_PhphyM_methylation_stats.txt'
+
+with open(stats_path, 'w') as fout:
+    fout.write('Phymatoceros phymatodes — per-site 5mC methylation statistics\n')
+    fout.write(f'Generated: {datetime.date.today()}\n')
+    fout.write(f'Min coverage: {METHYL_MIN_COV}×  |  Window: {WINDOW//1000} kb\n')
+    fout.write('Note: Female = PacBio/jasmine (5mC only); Male = ONT/modkit (5mC + 5hmC, only 5mC used)\n')
+    fout.write(f'\nSummary (200 kb autosomal windows):\n')
+    fout.write(f'  Autosomal 5mC: female={f_auto_mean:.1f}%  male={m_auto_mean:.1f}%\n')
+    fout.write(f'  U chr 5mC: {u_mean:.1f}%   V chr 5mC: {v_mean:.1f}%\n')
+    fout.write(f'  Pearson r={r_pearson:.4f}  Spearman ρ={r_spearman:.4f}  n={len(syn_f_5mC):,} windows\n')
+    for glabel in _genome_labels:
+        res = ctx_results[glabel]
+        total_n = sum(len(res['cov_data'].get(cat, [])) for cat in CATS)
+        fout.write(f'\n{"="*60}\n{glabel}  (total autosomal sites: {total_n:,})\n{"="*60}\n')
+        fout.write(f'\nSite counts by category:\n')
+        fout.write(f'  {"Category":16s}  {"N":>10}  {"% total":>8}\n')
+        for cat in CATS:
+            n = len(res['cov_data'].get(cat, []))
+            fout.write(f'  {cat:16s}  {n:>10,}  {n/total_n*100:>7.1f}%\n')
+        fout.write(f'\nCoverage statistics:\n')
+        fout.write(f'  {"Category":16s}  {"N":>10}  {"Median":>7}  {"Mean":>7}  {"P10":>6}  {"P90":>6}\n')
+        for cat in CATS:
+            c = res['cov_data'].get(cat, np.array([]))
+            if len(c) == 0:
+                fout.write(f'  {cat:16s}  {"0":>10}\n'); continue
+            fout.write(f'  {cat:16s}  {len(c):>10,}  {np.median(c):>7.1f}  {np.mean(c):>7.1f}  '
+                       f'{np.percentile(c,10):>6.1f}  {np.percentile(c,90):>6.1f}\n')
+        fout.write(f'\nCondensed context (intergenic / gene body / in repeat / gene+repeat):\n')
+        fout.write(f'  {"Category":16s}  {"N":>10}  {"intergenic":>11}  {"gene body":>10}  '
+                   f'{"in repeat":>10}  {"gene+repeat":>12}\n')
+        for cat in CATS:
+            c = res['cov_data'].get(cat, np.array([]))
+            n = len(c)
+            if n == 0: continue
+            ctx = res['ctx_data'].get(cat, {})
+            fi = ctx.get('intergenic', 0) * 100
+            fg = ctx.get('gene_only', 0) * 100
+            fr = sum(ctx.get(maj, 0) for maj in MAJOR_ORDER) * 100
+            fb = sum(ctx.get(_rep_key(maj), 0) for maj in MAJOR_ORDER) * 100
+            fout.write(f'  {cat:16s}  {n:>10,}  {fi:>10.1f}%  {fg:>9.1f}%  {fr:>9.1f}%  {fb:>11.1f}%\n')
+        fout.write(f'\nRepeat context by major class (repeat-only + gene+repeat combined):\n')
+        fout.write(f'  {"Category":16s}' + ''.join(f'  {m:>14}' for m in MAJOR_ORDER) + '\n')
+        for cat in CATS:
+            c = res['cov_data'].get(cat, np.array([]))
+            if len(c) == 0: continue
+            ctx = res['ctx_data'].get(cat, {})
+            row = f'  {cat:16s}'
+            for maj in MAJOR_ORDER:
+                tot = (ctx.get(maj, 0) + ctx.get(_rep_key(maj), 0)) * 100
+                row += f'  {tot:>13.1f}%'
+            fout.write(row + '\n')
+print(f'  Saved {stats_path}')
+
+# ══════════════════════════════════════════════════════════════════════════════
+# FIGURE 4 — Per-site methylation distribution histogram
+# ══════════════════════════════════════════════════════════════════════════════
+print('Plotting Figure 4: methylation distribution...')
+
+fig4, axes4 = plt.subplots(1, 2, figsize=(12, 5))
+fig4.patch.set_facecolor('white')
+bins = np.arange(0, 102, 2)
+bin_centers = (bins[:-1] + bins[1:]) / 2
+
+for col, glabel in enumerate(_genome_labels):
+    ax = axes4[col]
+    res = ctx_results[glabel]
+    total_n = sum(len(res['pct_data'].get(cat, [])) for cat in CATS)
+    for cat in CATS:
+        pct = res['pct_data'].get(cat, np.array([]))
+        if len(pct) == 0: continue
+        counts, _ = np.histogram(pct, bins=bins)
+        ax.bar(bin_centers, counts / total_n * 100, width=2.0,
+               color=CAT_COL[cat], alpha=0.82, linewidth=0,
+               label=f'{cat.capitalize()}  ({len(pct)/total_n*100:.1f}%,  n={len(pct):,})')
+    ax.axvline(20, color='#666666', lw=0.8, ls='--', alpha=0.6, zorder=5)
+    ax.axvline(80, color='#666666', lw=0.8, ls='--', alpha=0.6, zorder=5)
+    ax.set_xlabel('% modified (5mC per CpG site)', fontsize=9)
+    ax.set_ylabel('% of autosomal CpG sites', fontsize=9)
+    ax.set_xlim(0, 100)
+    ax.set_title(glabel, fontsize=10, pad=6)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.legend(fontsize=8, frameon=False, loc='upper center')
+
+tech_note = '  Female: PacBio/jasmine [5mC only]    Male: ONT/modkit [5mC only used]'
+fig4.suptitle('Phymatoceros phymatodes — autosomal CpG methylation distribution\n'
+              f'per-site % modified  ·  min_cov ≥ 5×  ·  autosomes only\n{tech_note}',
+              fontsize=10, fontweight='bold')
+plt.tight_layout()
+dist_out = 'PhphyF_PhphyM_methylation_distribution'
+fig4.savefig(f'{dist_out}.pdf', dpi=300, bbox_inches='tight', facecolor='white')
+fig4.savefig(f'{dist_out}.png', dpi=150, bbox_inches='tight', facecolor='white')
+print(f'  Saved {dist_out}.pdf/png')
+plt.close(fig4)
 
 print('\nDone.')
