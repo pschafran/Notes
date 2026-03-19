@@ -14,7 +14,34 @@ Validated the `config.yaml` for an ODP synteny run spanning 28 bryophyte species
 
 ### Files Created
 - `~/Notes/claude-scripts/2026-03-19_odp-bryophytes-config-validation_scripts/check_odp_files.sh` — validates protein/chrom/genome consistency for all local ODP species; accepts BASE_DIR as optional argument
+- `~/scripts/removeIFS.py` — general-purpose script; removes sequences containing internal stop codons from protein FASTA(s); clean FASTA to STDOUT, summary to STDERR
+- `~/scripts/convertIFS.py` — general-purpose script; converts internal `.` to `X` and truncates trailing `.` in protein FASTA(s); converted FASTA to STDOUT, summary to STDERR
 - `config.yaml.bak` — backup of config.yaml before hornwort path updates
+
+### check_odp_files.sh — stop codon handling (added this session)
+The script was extended to detect and fix stop codons in protein FASTA files before running consistency checks:
+- **Trailing `.`** (legitimate terminal stop codon): truncated, sequence retained
+- **Internal `.`** (in-frame stop codon, IFS): sequence removed from both protein `.fa` and `.chrom` file
+- Original files backed up to `.bak` before any modification
+- STDERR warning printed when files are updated
+
+Species affected in `odp_bryophytes_20260318`:
+| Species | Trailing stops truncated | Sequences removed (IFS) | Total IFS |
+|---------|--------------------------|-------------------------|-----------|
+| Syrur | 6 | 7,530 | 23,992 |
+| Ricav | 20,147 | 16 | 192 |
+| Riflu | 20,242 | 0 | 0 |
+| Rinat | 15,491 | 0 | 0 |
+
+### removeIFS.py / convertIFS.py — STDERR output conventions
+Both scripts output FASTA to STDOUT and a summary report to STDERR. Tagged lines in the report are tab-separated and greppable:
+- `CV\t{name}\t{count}` — sequence with internal IFS (removed by removeIFS.py, converted by convertIFS.py)
+- `TR\t{name}` — sequence with trailing stop truncated (convertIFS.py only)
+
+To extract and sort by IFS count:
+```bash
+removeIFS.py prot.fa 2>&1 >/dev/null | grep "^CV" | cut -f2,3 | sort -k2,2n
+```
 
 ### Files Copied into odp_bryophytes_20260318 (39 files total, 13 species × 3 file types)
 Sources: `odp_hornworts_20260313/`, `odp_hornworts_20260310/`, `HornwortBase/.db/fastas/`
