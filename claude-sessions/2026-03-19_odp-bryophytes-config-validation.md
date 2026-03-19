@@ -4,7 +4,7 @@
 **Location:** `/media/data/projects/hornwort_sex_chromosomes/analysis/synteny/odp_bryophytes_20260318`
 
 ## Summary
-Validated the `config.yaml` for an ODP synteny run spanning 28 bryophyte species (hornworts + mosses + liverworts). All referenced files were confirmed to exist. Protein/chrom/genome consistency checks were run for the 15 species with files local to the `odp_bryophytes_20260318` directory, uncovering 6 species with errors; all were fixed before the session ended.
+Validated the `config.yaml` for an ODP synteny run spanning 28 bryophyte species (hornworts + mosses + liverworts). All referenced files were confirmed to exist. Protein/chrom/genome consistency checks were run for the 15 species with files local to the `odp_bryophytes_20260318` directory, uncovering 6 species with errors; all were fixed before the session ended. Also reorganised project CLAUDE.md files, splitting content into new subdirectory-level files at `analysis/`, `analysis/orthofinder/`, and `analysis/synteny/` to reduce context token usage.
 
 ## Work Completed
 
@@ -13,6 +13,12 @@ Validated the `config.yaml` for an ODP synteny run spanning 28 bryophyte species
 
 ### Files Created
 - `~/Notes/claude-scripts/2026-03-19_odp-bryophytes-config-validation_scripts/check_odp_files.sh` — validates protein/chrom/genome consistency for all local ODP species; accepts BASE_DIR as optional argument
+
+### CLAUDE.md Files Modified/Created
+- `/media/data/projects/hornwort_sex_chromosomes/CLAUDE.md` — removed "Other Hornwort Species" table
+- `analysis/CLAUDE.md` — new; contains "Other Hornwort Species" table with context note
+- `analysis/orthofinder/CLAUDE.md` — new; OrthoFinder run inventory and downstream usage
+- `analysis/synteny/CLAUDE.md` — new; ODP tool description, config.yaml structure, chrom file format, validation script pointer, common error table
 
 ### Files Checked
 - `config.yaml` — Verified all 87 referenced file paths exist across all 28 species
