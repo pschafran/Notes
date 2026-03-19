@@ -4,15 +4,23 @@
 **Location:** `/media/data/projects/hornwort_sex_chromosomes/analysis/synteny/odp_bryophytes_20260318`
 
 ## Summary
-Validated the `config.yaml` for an ODP synteny run spanning 28 bryophyte species (hornworts + mosses + liverworts). All referenced files were confirmed to exist. Protein/chrom/genome consistency checks were run for the 15 species with files local to the `odp_bryophytes_20260318` directory, uncovering 6 species with errors; all were fixed before the session ended. Also reorganised project CLAUDE.md files, splitting content into new subdirectory-level files at `analysis/`, `analysis/orthofinder/`, and `analysis/synteny/` to reduce context token usage.
+Validated the `config.yaml` for an ODP synteny run spanning 28 bryophyte species (hornworts + mosses + liverworts). All referenced files were confirmed to exist. Protein/chrom/genome consistency checks were run for the 15 species with files local to the `odp_bryophytes_20260318` directory, uncovering 6 species with errors; all were fixed before the session ended. Also reorganised project CLAUDE.md files, splitting content into new subdirectory-level files at `analysis/`, `analysis/orthofinder/`, and `analysis/synteny/` to reduce context token usage. In a follow-up session, all 39 input files for the 13 hornwort species (previously pointing to external odp_hornworts_20260313/20260310 directories and HornwortBase) were copied into `odp_bryophytes_20260318/proteins/`, `chrom/`, and `genomes/`, config.yaml was updated to use the local paths, and all 13 species were validated clean (no errors).
 
 ## Work Completed
 
 ### Files Modified
 - `proteins/Ptkno.fa` — Removed Windows `\r\n` line endings with `sed -i 's/\r//'`
+- `config.yaml` — Updated all 13 hornwort species paths to point to local `odp_bryophytes_20260318/` subdirectories (was: odp_hornworts_20260313, odp_hornworts_20260310, HornwortBase/.db/fastas)
 
 ### Files Created
 - `~/Notes/claude-scripts/2026-03-19_odp-bryophytes-config-validation_scripts/check_odp_files.sh` — validates protein/chrom/genome consistency for all local ODP species; accepts BASE_DIR as optional argument
+- `config.yaml.bak` — backup of config.yaml before hornwort path updates
+
+### Files Copied into odp_bryophytes_20260318 (39 files total, 13 species × 3 file types)
+Sources: `odp_hornworts_20260313/`, `odp_hornworts_20260310/`, `HornwortBase/.db/fastas/`
+- `proteins/`: Ledus.fa, Anang.fa, Anthoceros_agrestis_Oxford.fa, Anthoceros_fusiformis.fa, Anthoceros_punctatus.fa, Megaceros_flagellaris.fa, NoaenF.fa, Notothylas_orbicularis.fa, Papro.fa, Paraphymatoceros_pearsonii.fa, Phaeoceros_carolinianus.fa, Phchi.fa, Phphy.fa
+- `chrom/`: same basenames with `.chrom` extension
+- `genomes/`: Ledus_UV_genome.fasta, Aang_ref2.fa, Anthoceros_agrestis_Oxford_genome.fasta, Anthoceros_fusiformis_genome.fasta, Anthoceros_punctatus_genome.fasta, Megaceros_flagellaris_genome.fasta, NoaenF_genome.fasta, Notothylas_orbicularis_genome.fasta, Papro_UV_genome.fasta, Paraphymatoceros_pearsonii_genome.fasta, Phaeoceros_carolinianus_genome.fasta, Phchi_UV_genome.fasta, Phphy_UV_genome.fasta
 
 ### CLAUDE.md Files Modified/Created
 - `/media/data/projects/hornwort_sex_chromosomes/CLAUDE.md` — removed "Other Hornwort Species" table
@@ -77,8 +85,7 @@ sed -i 's/\.t[0-9]\+//' Phpat.fa
 - All 87 file paths resolved successfully
 
 ## Next Steps
-- [ ] Run ODP analysis now that all 15 local species files are validated
-- [ ] The hornwort species (from odp_hornworts_20260313/20260310) were not re-validated in this session — they were only checked for file existence
+- [ ] Run ODP analysis — all 28 species now fully validated and self-contained within `odp_bryophytes_20260318/`
 
 ## Related Files
 - `config.yaml` — ODP run configuration
