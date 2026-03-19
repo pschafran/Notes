@@ -111,12 +111,62 @@ sed -i 's/\.t[0-9]\+//' Phpat.fa
 - `Phsp` (from CLAUDE.md species list) is absent from this config — intentional
 - All 87 file paths resolved successfully
 
+## Riparian Plots (completed this session)
+
+Four riparian configs created in `odp/step3-riparian/`, each with its own subdirectory (containing a `config.yaml` symlink) to avoid `output.pdf` overwrites:
+
+| Config file | Subdirectory | Species |
+|---|---|---|
+| `hornworts_only.yaml` | `hornworts_only/` | 13 hornwort species |
+| `mosses_only.yaml` | `mosses_only/` | 10 moss species |
+| `liverworts_only.yaml` | `liverworts_only/` | 5 liverwort species |
+| `hornworts_liverworts.yaml` | `hornworts_liverworts/` | 18 species combined |
+
+Run command (from subdirectory):
+```bash
+conda run -n oxforddotplots snakemake --snakefile ~/bin/odp/scripts/odp_rbh_to_ribbon -j 4
+```
+All four `output.pdf` files successfully produced.
+
+## CLAUDE.md Updates (completed this session)
+
+### `analysis/CLAUDE.md`
+- Added "Moss Species" table (10 species with sex chromosome notes based on composition_stats.tsv analysis)
+- Added "Liverwort Species" table (5 species with sex chromosome notes)
+- Corrected moss description: some mosses have UV sex chromosomes (not "none")
+- Added TODO to search literature for monoicous vs dioicous status per moss species
+
+### `analysis/synteny/CLAUDE.md`
+- Added full riparian plot workflow: Snakefile path (`~/bin/odp/scripts/odp_rbh_to_ribbon`), conda env (`oxforddotplots`), run command, output location, subdirectory isolation strategy, config structure, active run table
+- Updated IFS error table: sequences with internal IFS are removed (not just flagged)
+- Added `removeIFS.py` / `convertIFS.py` documentation with CV/TR STDERR tag conventions
+
+## Moss Sex Chromosome Analysis
+
+Analyzed `composition_stats.tsv` files in `/media/data/projects/hornwort_sex_chromosomes/analysis/moss_genomes/` for all 10 ODP moss species. Putative sex chromosomes identified by low gene density and high repeat density relative to other scaffolds:
+
+| Species | Putative sex chr | Gene% (outlier vs typical) | Repeat% |
+|---|---|---|---|
+| Cepur | U (GG1) + V (R40) | 2.8% / 2.9% vs ~19% | ~44% |
+| Sycan | Chr13 | 3.5% vs ~15% | 49% |
+| Hycur | HiC_scaffold_11 | 2.5% vs ~11% | 43% |
+| Ensed | HiC_scaffold_2 | 0.9% vs ~8% | 49% |
+| Encon | Encon_10 + Encon_12 | 2.9% / 5.1% vs ~9% | 60% / 68% |
+| Ptkno | chr1 + chr5 | 3.0% / 2.7% vs ~11% | 57% / 58% |
+| Spfal | LG20 | 8% vs ~25% | 48% |
+| Syrur | Syrur_1 (ambiguous) | 1.9% but all scaffolds low | 65% |
+| Phafr | none obvious | — | — |
+| Phpat | no stats file | — | — |
+
+Note: Cepur ODP assembly merges GG1 (full genome including U) + R40 V chromosome only.
+
 ## Next Steps
 - [ ] Run ODP analysis — all 28 species now fully validated and self-contained within `odp_bryophytes_20260318/`
+- [ ] Search literature to confirm monoicous vs dioicous status for each moss species
 
 ## Related Files
 - `config.yaml` — ODP run configuration
 - Previous session: `2026-03-18_Mquadrata-genome-composition-fix.md`
 
 ## Tags
-`#synteny` `#ODP` `#bryophytes` `#config-validation` `#data-QC`
+`#synteny` `#ODP` `#bryophytes` `#config-validation` `#data-QC` `#riparian`
